@@ -1,1 +1,6 @@
 /venv/
+
+
+# SMOG files
+/metroclima/metroclima.sock
+/metroclima/supervisor.log
