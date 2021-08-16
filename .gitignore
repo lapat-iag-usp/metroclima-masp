@@ -1,5 +1,6 @@
 /venv/
 
+.idea/
 
 # SMOG files
 /metroclima/metroclima.sock
