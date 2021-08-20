@@ -1,8 +1,15 @@
+# virtual environment
 /venv/
 
+# IDE files
 .idea/
 
+# environment file
+# see .env.example for details
 /metroclima/.env
+
+# database
+/metroclima/*.sqlite3
 
 # SMOG files
 /metroclima/metroclima.sock
