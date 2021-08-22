@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="bg-image d-flex justify-content-center align-items-center" style="
+      background-image: url('../static/img/img-bg-crop.jpg');
+      height: 50vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: bottom center;">
+<!--    <h2 class="display-4 text-center text-white mt-4">Metroclima</h2>-->
+<!--      <p><cite class="text-white">jointly tracking climate change and air quality</cite></p>-->
+</div>
+
+ <!-- About Section -->
+  <section id="about" class="page-section bg-dark pt-5 pb-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="display-6 text-center text-white mt-4">Metroclima Project</h2>
+          <hr class="divider text-white my-4">
+            <p class="text-muted mb-3">The objective of the Metroclima project is to examine the role of Sao Paulo
+                megacity emissions as drivers for regional air quality degradation and climate change. The project
+                integrates multi-platform measurements and modeling tools to describe the atmospheric behavior of
+                greenhouse gases and short-lived climate pollutants, and the effects of climate change on the air
+                quality in the metropolitan area of Sao Paulo.
+            </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- Network Section -->
+  <section id="network" class="page-section bg-light pt-5 pb-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 order-lg-1">
+          <div class="p-4">
+            <img class="img-fluid" src="{% static 'img/img-network-crop.jpg' %}" alt="">
+          </div>
+        </div>
+        <div class="col-lg-6 order-lg-2">
+          <div class="p-4">
+            <h2 class="display-6" style="font-size:2rem;">
+                First GHG network in the South America's largest megacity
+            </h2>
+              <p class="text-muted">Sao Paulo Metropolitan Area has 39 municipalities and a population of about 22
+                  million inhabitants. More than half of this population resides in Sao Paulo city, which, in 2018, was
+                  responsible for emitting nearly 18 million tons of CO2 equivalent. This network is a pioneer
+                  observation system designed to monitor greenhouse gas concentrations. This initiative helps
+                  researchers and policymakers to understand the city's contribution to climate change and measure the
+                  impact of public policies to reduce greenhouse gas emissions concerning the Paris Agreement and other
+                  commitments.
+              </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
