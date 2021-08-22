@@ -1,12 +1,13 @@
-<footer class="footer mt-auto py-3 my-4 footer-dark bg-dark">
+<!-- to create a sticky footer add fixed-bottom to the class-->
+<footer class="footer mt-auto py-3 footer-dark bg-dark">
   <div class="container">
-    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
+    <ul class="nav justify-content-center border-bottom pb-1 mb-2">
+      <li class="nav-item"><a href="{% url 'home' %}" class="nav-link px-2 text-muted">Home</a></li>
       <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Members</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Map</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Stations</a></li>
     </ul>
-    <p class="text-center text-muted">© 2021 LAPAt</p>
+    <p class="text-center text-muted mb-0">© 2021 LAPAt</p>
   </div>
 </footer>
