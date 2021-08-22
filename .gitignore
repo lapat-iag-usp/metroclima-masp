@@ -11,6 +11,9 @@
 # database
 /metroclima/*.sqlite3
 
+# pycache
+/metroclima/__pycache__/
+
 # SMOG files
 /metroclima/metroclima.sock
 /metroclima/supervisor.log
