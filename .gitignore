@@ -12,7 +12,8 @@
 /metroclima/*.sqlite3
 
 # pycache
-/metroclima/__pycache__/
+__pycache__/
+*.pyc
 
 # SMOG files
 /metroclima/metroclima.sock
