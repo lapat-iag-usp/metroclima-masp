@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Title and overview -->
+  <div class="container col-sm-9">
+    <h2 class="display-6 mt-5">{{ station.name }} Station</h2>
+    <h3 class="display-6 mt-4" style="font-size:2rem;">Overview</h3>
+    <div class="lead" style="text-align:justify; font-size:18px">
+      <p>{{ station.description }}</p>
+    </div>
+
+    {% if station.video %}
+    <div class="row justify-content-center">
+      <div class="col-md-9">
+        <video width="100%" controls autoplay muted>
+          <source src="{{ station.video.url }}" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Information -->
+  <div class="container col-sm-9">
+    <h3 class="display-6 mt-4" style="font-size:2rem;">Information</h3>
+    <div class="row justify-content-center mb-3">
+      <div class="col-sm-9 text-center">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row">Latitude</th>
+              <td>{{ station.latitude }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Longitude</th>
+              <td>{{ station.longitude }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Elevation</th>
+              <td>{{ station.elevation }} m</td>
+            </tr>
+            {% if station.inlet_elevation %}
+            <tr>
+              <th scope="row">Inlet elevation</th>
+              <td>{{ station.inlet_elevation }} m agl</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instruments -->
+  {% if station.instruments %}
+  <div class="container col-sm-9">
+    <div class="row justify-content-center mb-5">
+      <div class="col-sm-9 text-center">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="col">Instrument</th>
+              <th scope="col">Measuring</th>
+            </tr>
+            {% for instrument in station.instruments.all %}
+            <tr>
+              <td>{{ instrument }}</td>
+              <td>{{ instrument.measuring }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Images -->
+  {% if station.image_set.all %}
+  <div class="container col-sm-9">
+    <h3 class="display-6 mt-4 mb-4" style="font-size:2rem;">Images</h3>
+    {% for image in station.image_set.all %}
+      {% if image.panoramic %}
+      <div class="row justify-content-center">
+        <div class="col-md-9">
+          <img class="img-fluid mb-3" style="width:100%" src="{{ image }}" alt="{{ image.alt }}">
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+    <div class="row justify-content-center mb-5">
+      {% for image in station.image_set.all %}
+        {% if not image.panoramic %}
+        <div class="col-md-3">
+          <img class="img-fluid mb-3" style="width:100%"
+               src="{{ image }}" alt="{{ image.alt }}">
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

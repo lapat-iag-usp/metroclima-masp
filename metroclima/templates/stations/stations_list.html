@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+  <div class="container col-sm-9">
+    <h2 class="display-6 mt-5 mb-4">Stations</h2>
+    <table class="table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Picture</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for station in stations %}
+        <tr>
+          <td>
+            {% if station.picture %}
+            <a href="/stations/{{ station.slug }}">
+              <img src="{{ station.picture.url }}" alt="{{ station.name }}" style="width:90px;">
+            </a>
+            {% else %}
+            <span>no picture</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="/stations/{{ station.slug }}" style="text-decoration:none;color: black">
+              <b>{{ station.name }}</b>
+            </a> <br>
+            {{ station.description }}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

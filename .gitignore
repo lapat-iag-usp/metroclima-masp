@@ -11,6 +11,12 @@
 # database
 /metroclima/*.sqlite3
 
+# media files
+media/
+
+#migrations
+migrations/
+
 # pycache
 __pycache__/
 *.pyc
