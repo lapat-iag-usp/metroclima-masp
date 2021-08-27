@@ -15,8 +15,8 @@
           <tr>
             <td class="col-md-6">{{ member.name }}</td>
             <td class="col-md-3">{{ member.institution }}</td>
-            {% if member.google %}
             <td class="col-md-3">
+            {% if member.google %}
               <a href="{{ member.google }}" style="color: black"><i class="ai ai-google-scholar-square ai-1x"></i></a>
             {% endif %}
             {% if member.orcid %}
