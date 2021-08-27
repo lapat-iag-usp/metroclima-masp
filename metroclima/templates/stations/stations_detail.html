@@ -6,9 +6,9 @@
 
   <!-- Title and overview -->
   <div class="container col-sm-9">
-    <h2 class="display-6 mt-5">{{ station.name }} Station</h2>
-    <h3 class="display-6 mt-4" style="font-size:2rem;">Overview</h3>
-    <div class="lead" style="text-align:justify; font-size:18px">
+    <h2 class="display-5 mt-5">{{ station.name }} Station</h2>
+    <h3 class="display-6 mt-4">Overview</h3>
+    <div class="lead" style="font-size:18px">
       <p>{{ station.description }}</p>
     </div>
 
@@ -25,7 +25,7 @@
 
   <!-- Information -->
   <div class="container col-sm-9">
-    <h3 class="display-6 mt-4" style="font-size:2rem;">Information</h3>
+    <h3 class="display-6 mt-4">Information</h3>
     <div class="row justify-content-center mb-3">
       <div class="col-sm-9 text-center">
         <table class="table">
@@ -81,7 +81,7 @@
   <!-- Images -->
   {% if station.image_set.all %}
   <div class="container col-sm-9">
-    <h3 class="display-6 mt-4 mb-4" style="font-size:2rem;">Images</h3>
+    <h3 class="display-6 mt-4 mb-4">Images</h3>
     {% for image in station.image_set.all %}
       {% if image.panoramic %}
       <div class="row justify-content-center">
