@@ -25,6 +25,7 @@ urlpatterns = [
     # path('', views.maintenance_page),
     path('', views.HomeView.as_view(), name='home'),
     path('about/', views.AboutView.as_view(), name='about'),
+    path('members/', include('members.urls')),
     path('stations/', include('stations.urls')),
 ]
 

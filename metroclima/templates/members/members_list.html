@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+  <div class="container col-sm-9 mb-5">
+    <h2 class="display-5 mt-5 mb-4">Members</h2>
+    {% for group in groups %}
+    <h3 class="display-6 mt-4">{{ group }}</h3>
+      <table class="table mb-0 align-middle mb-5">
+        <tbody>
+        {% for member in members %}
+          {% if member.group == group %}
+          <tr>
+            <td class="col-md-6">{{ member.name }}</td>
+            <td class="col-md-3">{{ member.institution }}</td>
+            {% if member.google %}
+            <td class="col-md-3">
+              <a href="{{ member.google }}" style="color: black"><i class="ai ai-google-scholar-square ai-1x"></i></a>
+            {% endif %}
+            {% if member.orcid %}
+              <a href="{{ member.orcid }}" style="color: black"><i class="ai ai-orcid ai-1x"></i></a>
+            {% endif %}
+            {% if member.lattes %}
+              <a href="{{ member.lattes }}" style="color: black"><i class="ai ai-lattes ai-1x"></i></a>
+            {% endif %}
+            {% if member.email %}
+              <a href="mailto:{{ member.email }}" style="color: black"><i class="bi bi-envelope-fill"></i></a>
+            </td>
+            {% else %}
+            <td></td>
+            {% endif %}
+          </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+    <h2 class="display-6 mt-5 mb-4">Sponsor</h2>
+      Grant #2016/18438-0, São Paulo Research Foundation (FAPESP)
+      <p class="text-muted">
+        The opinions, hypotheses and conclusions or recommendations
+        expressed in this material are the responsibility of the author(s)
+        and do not necessarily reflect the vision of FAPESP
+      </p>
+  </div>
+</div>
+
+{% endblock %}
