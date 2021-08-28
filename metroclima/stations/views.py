@@ -20,7 +20,7 @@ def show_map(request):
         <b>Latitude:</b> {station.latitude}
         <br><b>Longitude:</b> {station.longitude}
         <br><b>Elevation:</b> {station.elevation} m
-        <br><a href="/stations/{station.slug}" target="_blank">More info</a>
+        <br><a href="/stations/{station.slug}" style="text-decoration:none" target="_blank">more info</a>
         """
         text = folium.Html(info, script=True)
         info = folium.Popup(text, max_width=200, min_width=200)

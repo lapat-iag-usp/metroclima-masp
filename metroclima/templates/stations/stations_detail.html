@@ -24,46 +24,42 @@
   </div>
 
   <!-- Information -->
-  <div class="container col-sm-9">
+  <div class="container col-lg-9">
     <h3 class="display-6 mt-4">Information</h3>
     <div class="row justify-content-center mb-3">
-      <div class="col-sm-9 text-center">
+      <div class="col-md-9 text-center">
         <table class="table">
           <tbody>
             <tr>
-              <th scope="row">Latitude</th>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Latitude</b></td>
               <td>{{ station.latitude }}</td>
             </tr>
             <tr>
-              <th scope="row">Longitude</th>
+              <td><b>Longitude</b></td>
               <td>{{ station.longitude }}</td>
             </tr>
             <tr>
-              <th scope="row">Elevation</th>
+              <td><b>Elevation</b></td>
               <td>{{ station.elevation }} m</td>
             </tr>
             {% if station.inlet_elevation %}
             <tr>
-              <th scope="row">Inlet elevation</th>
+              <td><b>Inlet elevation</b></td>
               <td>{{ station.inlet_elevation }} m agl</td>
             </tr>
             {% endif %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Instruments -->
-  {% if station.instruments %}
-  <div class="container col-sm-9">
-    <div class="row justify-content-center mb-5">
-      <div class="col-sm-9 text-center">
-        <table class="table">
-          <tbody>
+            {% if station.instruments.all %}
             <tr>
-              <th scope="col">Instrument</th>
-              <th scope="col">Measuring</th>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td><b>Instrument</b></td>
+              <td><b>Measuring</b></td>
             </tr>
             {% for instrument in station.instruments.all %}
             <tr>
@@ -71,16 +67,16 @@
               <td>{{ instrument.measuring }}</td>
             </tr>
             {% endfor %}
+            {% endif %}
           </tbody>
         </table>
       </div>
     </div>
-    {% endif %}
   </div>
 
   <!-- Images -->
   {% if station.image_set.all %}
-  <div class="container col-sm-9">
+  <div class="container col-lg-9">
     <h3 class="display-6 mt-4 mb-4">Images</h3>
     {% for image in station.image_set.all %}
       {% if image.panoramic %}

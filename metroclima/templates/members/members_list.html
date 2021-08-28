@@ -8,13 +8,13 @@
     <h2 class="display-5 mt-5 mb-4">Members</h2>
     {% for group in groups %}
     <h3 class="display-6 mt-4">{{ group }}</h3>
-      <table class="table mb-0 align-middle mb-5">
+      <table class="table align-middle mb-5">
         <tbody>
         {% for member in members %}
           {% if member.group == group %}
           <tr>
-            <td class="col-md-6">{{ member.name }}</td>
-            <td class="col-md-3">{{ member.institution }}</td>
+            <td class="col-md-6 lead" style="font-size:16px">{{ member.name }}</td>
+            <td class="col-md-3 lead" style="font-size:16px">{{ member.institution }}</td>
             <td class="col-md-3">
             {% if member.google %}
               <a href="{{ member.google }}" style="color: black"><i class="ai ai-google-scholar-square ai-1x"></i></a>
