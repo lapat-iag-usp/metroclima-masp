@@ -27,6 +27,7 @@ urlpatterns = [
     path('about/', views.AboutView.as_view(), name='about'),
     path('members/', include('members.urls')),
     path('stations/', include('stations.urls')),
+    path('accounts/', include('accounts.urls')),
 ]
 
 if settings.DEBUG:

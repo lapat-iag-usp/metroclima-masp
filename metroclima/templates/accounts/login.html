@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex flex-row justify-content-center align-items-center mb-0" style="height:50vh">
+  {% if not request.user.is_authenticated %}
+  <div>
+    <h1 class="display-5 mb-4">Login</h1>
+    <form method='POST'>{% csrf_token %}
+      <div>
+        <input type="text" class="form-control mb-3" name="username" placeholder="username">
+        <input type="password" class="form-control" name="password" placeholder="password">
+      </div>
+      {% if form.errors %}
+        <p style="color:red;font-size:12px">
+          Your username or password didn't match.
+        </p>
+      {% else %}
+        <p style="color:white;font-size:12px">.</p>
+      {% endif %}
+      <button class="btn btn-dark me-2 btn-md" type='submit'>Submit</button>
+    </form>
+  </div>
+  {% else %}
+    <p>You're already logged in. Would you like to
+      <a href="{% url 'logout' %}" class="btn btn-dark me-1 btn-sm">Logout</a>?
+    </p>
+  {% endif %}
+</div>
+
+{% endblock %}
