@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex flex-row justify-content-center align-items-center" style="height: 50vh;">
+  {% if request.user.is_authenticated %}
+  <div>
+    <p>Your password was successfully changed. Return to
+      <a href="{% url 'home' %}" class="btn btn-dark me-1 btn-sm">Home page</a></p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
