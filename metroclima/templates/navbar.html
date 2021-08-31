@@ -19,6 +19,11 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'stations_list' %}">Stations</a>
         </li>
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'ds_home' %}">Dashboard</a>
+        </li>
+        {% endif %}
       </ul>
       <div class="text-end">
         {% if user.is_authenticated %}

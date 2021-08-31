@@ -6,6 +6,9 @@
       <li class="nav-item"><a href="{% url 'members_list' %}" class="nav-link px-2 text-muted">Members</a></li>
       <li class="nav-item"><a href="{% url 'stations_map' %}" class="nav-link px-2 text-muted">Map</a></li>
       <li class="nav-item"><a href="{% url 'stations_list' %}" class="nav-link px-2 text-muted">Stations</a></li>
+      {% if user.is_authenticated %}
+      <li class="nav-item"><a href="{% url 'ds_home' %}" class="nav-link px-2 text-muted">Dashboard</a></li>
+      {% endif %}
     </ul>
     <a href="http://www.lapat.iag.usp.br/" style="text-decoration:None">
       <p class="text-center text-muted mb-0">© 2021 LAPAt</p>

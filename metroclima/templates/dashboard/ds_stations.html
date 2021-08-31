@@ -1,0 +1,28 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+  <h2 class="display-6">{{ station.name }} Station</h2>
+  <br>
+    {% if station.raw_data_path %}
+    <ul>
+      <li>
+        <a href="{% url 'ds_raw' station.slug %}" style="text-decoration:None;color:black">
+          Raw data graphs
+        </a>
+      </li>
+    </ul>
+    {% else %}
+    <ul style="list-style-type:none">
+<!--    <ul>-->
+      <li>
+          <i class="bi bi-exclamation-lg"></i>
+          Data path not defined
+      </li>
+    </ul>
+    {% endif %}
+
+
+{% endblock %}

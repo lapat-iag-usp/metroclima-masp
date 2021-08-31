@@ -1,0 +1,66 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+  <h2 class="display-6">{{ station.name }} Station - Raw data</h2>
+  <br>
+    {% if station.raw_data_path %}
+    <!-- Form -->
+    <div align="center">
+
+    <div class="col-lg-8 col-md-6 mb-1">
+        <form action="." method="POST">
+        {% csrf_token %}
+
+        <!-- Form fields -->
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="row text-muted" style="font-size: 14px">Choose the file:</div>
+                <div class="row">{{ form.files_name }}</div>
+            </div>
+        </div>
+        <!-- Form fields END -->
+
+        <!-- Form button -->
+        <div class="row">
+        <div class="col">
+            <button style='margin-top:5px;' type="submit" name="_prev" class="btn btn-primary btn-sm">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+        </div>
+        <div class="col">
+            <button style='margin-top:5px;' type="submit" name="_submit" class="btn btn-primary btn-sm">
+              Update
+            </button>
+        </div>
+        <div class="col">
+            <button style='margin-top:5px;' type="submit" name="_next" class="btn btn-primary btn-sm">
+              <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+        </div>
+        <!-- Form button END -->
+
+        </form>
+    </div>
+    <!-- Form END -->
+
+    <!-- Dashboard -->
+        {{div | safe}}
+        {{script | safe}}
+    <!-- Dashboard END -->
+
+    </div>
+
+    {% else %}
+      <ul style="list-style-type:none">
+        <li>
+          <i class="bi bi-exclamation-lg"></i>
+          Data path not defined
+        </li>
+      </ul>
+    {% endif %}
+
+{% endblock %}

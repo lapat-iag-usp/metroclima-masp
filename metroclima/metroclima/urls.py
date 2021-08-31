@@ -28,6 +28,7 @@ urlpatterns = [
     path('members/', include('members.urls')),
     path('stations/', include('stations.urls')),
     path('accounts/', include('accounts.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]
 
 if settings.DEBUG:
