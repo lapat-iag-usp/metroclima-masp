@@ -4,9 +4,9 @@
 
 {% block content %}
 
-  <h2 class="display-6">{{ station.name }} Station - Raw data</h2>
+  <h2 class="display-6">{{ campaign.name }} - Raw data</h2>
   <br>
-    {% if station.raw_data_path %}
+    {% if campaign.raw_data_path %}
     <!-- Form -->
     <div align="center">
 
@@ -55,10 +55,10 @@
     </div>
 
     {% else %}
-      <ul style="list-style-type:none">
+      <ul style="list-style-type:none;font-size:13px">
         <li>
           <i class="bi bi-exclamation-lg"></i>
-          Data path not defined
+          No data path defined
         </li>
       </ul>
     {% endif %}

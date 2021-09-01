@@ -6,20 +6,33 @@
 
   <h2 class="display-6">{{ station.name }} Station</h2>
   <br>
-    {% if station.raw_data_path %}
+  <h4 class="mb-3">Measurement Campaigns</h4>
+
+    {% if station.campaign_set.all %}
+    {% for campaign in station.campaign_set.all %}
+    {% if campaign.raw_data_path %}
     <ul>
       <li>
-        <a href="{% url 'ds_raw' station.slug %}" style="text-decoration:None;color:black">
-          Raw data graphs
+        <a href="{% url 'ds_raw' campaign.slug %}" style="text-decoration:None;color:black">
+            {{ campaign.name }}
         </a>
       </li>
     </ul>
     {% else %}
-    <ul style="list-style-type:none">
-<!--    <ul>-->
+    <ul style="list-style-type:none;font-size:13px">
       <li>
           <i class="bi bi-exclamation-lg"></i>
-          Data path not defined
+          No data path defined for {{ campaign.name }} campaign
+      </li>
+    </ul>
+    {% endif %}
+    {% endfor %}
+
+    {% else %}
+    <ul style="list-style-type:none;font-size:13px">
+      <li>
+          <i class="bi bi-exclamation-lg"></i>
+          No campaigns available
       </li>
     </ul>
     {% endif %}

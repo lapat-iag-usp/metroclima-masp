@@ -3,8 +3,9 @@ from django.template.defaultfilters import slugify
 
 
 class Instrument(models.Model):
-    instrument = models.CharField(max_length=25)
-    measuring = models.CharField(max_length=25)
+    instrument = models.CharField(max_length=50)
+    measuring = models.CharField(max_length=50)
+    serial_number = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return self.instrument
@@ -21,10 +22,6 @@ class Station(models.Model):
     video = models.FileField(upload_to='stations/videos/', blank=True, null=True)
     instruments = models.ManyToManyField('Instrument', blank=True)
     slug = models.SlugField(unique=True, blank=True)
-    # data related fields
-    raw_data_path = models.CharField(max_length=250, blank=True, null=True)
-    raw_var_list = models.CharField(max_length=250, blank=True, null=True)
-    raw_dtypes = models.CharField(max_length=250, blank=True, null=True)
 
     def __str__(self):
         return self.name

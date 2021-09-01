@@ -52,15 +52,15 @@
                 </div>
               </li>
 
-              <!-- Raw data graphs  -->
+              <!-- Raw data graphs - campaigns -->
               <li class="mb-1">
                 <button class="btn btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#raw-data-collapse">
                   Raw data graphs
                 </button>
                 <div class="collapse" id="raw-data-collapse">
                   <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    {% for station in stations %}
-                    <li><a href="{% url 'ds_raw' station.slug %}" class="link-light rounded">{{ station.name }}</a></li>
+                    {% for campaign in campaigns %}
+                    <li><a href="{% url 'ds_raw' campaign.slug %}" class="link-light rounded">{{ campaign.name }}</a></li>
                     {% endfor %}
                   </ul>
                 </div>

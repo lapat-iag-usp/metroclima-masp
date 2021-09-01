@@ -6,6 +6,7 @@ import dask.dataframe as dd
 import pandas as pd
 
 from stations.models import Station
+from .models import Campaign
 from .mygraphs import bokeh_raw
 from .forms import DataRawFormFunction
 
@@ -22,11 +23,11 @@ class DashboardStationsView(DetailView):
 
 @login_required
 def graphs_raw(request, slug):
-    station = Station.objects.get(slug=slug)
+    campaign = Campaign.objects.get(slug=slug)
 
     # form choices
-    if station.raw_data_path:
-        path = station.raw_data_path
+    if campaign.raw_data_path:
+        path = campaign.raw_data_path
         filenames = [filename for filename in glob.iglob(
             path + '**/*.dat', recursive=True)]
         if filenames:
@@ -56,8 +57,8 @@ def graphs_raw(request, slug):
                     form = raw_data_form(initial={'files_name': files_name})
 
             # dataframe
-            usecols = station.raw_var_list.split(',')
-            dtype = station.raw_dtypes.split(',')
+            usecols = campaign.raw_var_list.split(',')
+            dtype = campaign.raw_dtypes.split(',')
             dtype = dict(zip(usecols, dtype))
             df = dd.read_csv(files_name,
                              sep=r'\s+',
@@ -69,7 +70,7 @@ def graphs_raw(request, slug):
             df = df.drop(['DATE', 'TIME'], axis=1)
 
             script, div = bokeh_raw(df)
-            context = {'station': station,
+            context = {'campaign': campaign,
                        'form': form,
                        'script': script, 'div': div}
             return render(request, 'dashboard/ds_raw.html', context)
@@ -78,9 +79,9 @@ def graphs_raw(request, slug):
             # form
             raw_data_form = DataRawFormFunction([('', 'no data available')])
             form = raw_data_form(request.POST or None)
-            context = {'station': station, 'form': form}
+            context = {'campaign': campaign, 'form': form}
             return render(request, 'dashboard/ds_raw.html', context)
 
     else:
-        context = {'station': station}
+        context = {'campaign': campaign}
         return render(request, 'dashboard/ds_raw.html', context)
