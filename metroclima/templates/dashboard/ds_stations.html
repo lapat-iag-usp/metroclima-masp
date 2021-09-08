@@ -13,9 +13,19 @@
     {% if campaign.raw_data_path %}
     <ul>
       <li>
-        <a href="{% url 'ds_raw' campaign.slug %}" style="text-decoration:None;color:black">
             {{ campaign.name }}
-        </a>
+        <ul>
+          <li>
+            <a href="{% url 'ds_raw' campaign.slug %}" style="text-decoration:None;color:black">
+              Raw data
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'ds_raw_24h' campaign.slug %}" style="text-decoration:None;color:black">
+              Raw data 24h
+            </a>
+          </li>
+        </ul>
       </li>
     </ul>
     {% else %}

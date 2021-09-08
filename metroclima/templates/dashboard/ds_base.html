@@ -55,12 +55,26 @@
               <!-- Raw data graphs - campaigns -->
               <li class="mb-1">
                 <button class="btn btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#raw-data-collapse">
-                  Raw data graphs
+                  Raw data
                 </button>
                 <div class="collapse" id="raw-data-collapse">
                   <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     {% for campaign in campaigns %}
                     <li><a href="{% url 'ds_raw' campaign.slug %}" class="link-light rounded">{{ campaign.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </li>
+
+              <!-- Raw data 24 hour graphs - campaigns -->
+              <li class="mb-1">
+                <button class="btn btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#raw-data-24h-collapse">
+                  Raw data 24h
+                </button>
+                <div class="collapse" id="raw-data-24h-collapse">
+                  <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    {% for campaign in campaigns %}
+                    <li><a href="{% url 'ds_raw_24h' campaign.slug %}" class="link-light rounded">{{ campaign.name }}</a></li>
                     {% endfor %}
                   </ul>
                 </div>
