@@ -29,6 +29,7 @@ urlpatterns = [
     path('stations/', include('stations.urls')),
     path('accounts/', include('accounts.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('api_upload/', include('api_upload.urls')),
 ]
 
 if settings.DEBUG:
