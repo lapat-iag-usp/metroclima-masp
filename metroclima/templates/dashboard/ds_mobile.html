@@ -1,0 +1,48 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+  <h2 class="display-6">{{ instrument.instrument }}</h2>
+  <br>
+  <h4 class="mb-3">Mobile Campaigns</h4>
+
+  {% for campaign in campaigns %}
+  {% if campaign.instrument|stringformat:'s' == instrument.instrument|stringformat:'s' %}
+  {% if campaign.raw_data_path %}
+
+  <ul>
+    <li>
+      {{ campaign.name }}
+      {% if campaign.description %}
+      <div class="col-lg-10 text-muted">{{ campaign.description }}</div>
+      {% endif %}
+      <ul>
+        <li>
+          <a href="{% url 'ds_raw' campaign.slug %}" style="text-decoration:None;color:black">
+            Raw data
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'ds_raw_24h_mobile' campaign.slug %}" style="text-decoration:None;color:black">
+            Raw data 24h
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  {% else %}
+  <ul style="list-style-type:none;font-size:13px">
+    <li>
+      <i class="bi bi-exclamation-lg"></i>
+      No data path defined for {{ campaign.name }} campaign
+    </li>
+  </ul>
+  {% endif %}
+
+  {% endif %}
+
+  {% endfor %}
+
+{% endblock %}

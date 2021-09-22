@@ -8,3 +8,8 @@ def stations(request):
 def campaigns(request):
     from .models import Campaign
     return {'campaigns': Campaign.objects.all().order_by('name')}
+
+
+def instruments(request):
+    from .models import Instrument
+    return {'instruments': Instrument.objects.all().order_by('instrument')}

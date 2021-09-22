@@ -6,9 +6,15 @@ class Instrument(models.Model):
     instrument = models.CharField(max_length=50)
     measuring = models.CharField(max_length=50)
     serial_number = models.CharField(max_length=50, null=True)
+    mobile_campaign = models.BooleanField(default=False)
+    slug = models.SlugField(unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.instrument
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.instrument)
+        return super().save(*args, **kwargs)
 
 
 class Station(models.Model):
