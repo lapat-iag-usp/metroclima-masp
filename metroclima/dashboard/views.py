@@ -72,6 +72,7 @@ def graphs_raw(request, slug):
                              sep=r'\s+',
                              usecols=usecols,
                              dtype=dtype,
+                             skipfooter=1,
                              )
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
@@ -143,6 +144,7 @@ def graphs_raw_24h(request, slug):
                              sep=r'\s+',
                              usecols=usecols,
                              dtype=dtype,
+                             skipfooter=1,
                              )
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
