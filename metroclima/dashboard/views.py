@@ -9,7 +9,7 @@ import zipfile
 
 from stations.models import Station, Instrument
 from .models import Campaign
-from .mygraphs import bokeh_raw
+from .mygraphs import bokeh_raw, bokeh_raw_mobile
 from .forms import DataRawFormFunction, DataRaw24hFormFunction
 
 
@@ -177,7 +177,6 @@ def graphs_raw_24h_mobile(request, slug):
         dirnames.sort(reverse=True)
         dates = list([filename[-10:] for filename in dirnames])
         date_choices = list(zip(dates, dates))
-        print(date_choices)
 
         # initial values
         days = dates[0]
@@ -190,15 +189,15 @@ def graphs_raw_24h_mobile(request, slug):
             days = request.POST.get('days')
             if '_prev' in request.POST:
                 days = (datetime.strptime(
-                    days, '%Y/%m/%d') - timedelta(
-                    days=1)).strftime('%Y/%m/%d')
+                    days, '%Y-%m-%d') - timedelta(
+                    days=1)).strftime('%Y-%m-%d')
                 if days < date_choices[-1][0]:
                     days = date_choices[0][0]
                 form = raw_data_24h_form(initial={'days': days})
             elif '_next' in request.POST:
                 days = (datetime.strptime(
-                    days, '%Y/%m/%d') + timedelta(
-                    days=1)).strftime('%Y/%m/%d')
+                    days, '%Y-%m-%d') + timedelta(
+                    days=1)).strftime('%Y-%m-%d')
                 if days > date_choices[0][0]:
                     days = date_choices[-1][0]
                 form = raw_data_24h_form(initial={'days': days})
@@ -208,26 +207,30 @@ def graphs_raw_24h_mobile(request, slug):
         dtype = campaign.raw_dtypes.split(',')
         dtype = dict(zip(usecols, dtype))
 
+        # for filename in glob.iglob(path + days + '/*f*.txt*'):
+        #     if filename[-3:] == 'zip':
+        #         with zipfile.ZipFile(filename, 'r') as zip_ref:
+        #             zip_ref.extractall(filename + '/../')
+
         filenames = [filename for filename in glob.iglob(
-                path + days + '/*f*.txt*')]
-        print(filenames)
-        '''
+                path + days + '/*_f*.txt')]
+
         if filenames:
             filenames.sort()
             df = dd.read_csv(filenames,
-                             sep=r'\s+',
                              usecols=usecols,
                              dtype=dtype,
+                             skiprows=1,
+                             skipinitialspace=True,
                              )
             df = df.compute()
-            df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
-            df = df.drop(['DATE', 'TIME'], axis=1)
-
-            script, div = bokeh_raw(df)
+            df['Time'] = pd.to_datetime(df['Time'])
+            script, div = bokeh_raw_mobile(df)
             context = {'campaign': campaign,
                        'form': form,
                        'script': script, 'div': div}
             return render(request, 'dashboard/ds_raw_24h.html', context)
+        '''
 
         else:
             # form
@@ -240,5 +243,5 @@ def graphs_raw_24h_mobile(request, slug):
         context = {'campaign': campaign}
         return render(request, 'dashboard/ds_raw_24h.html', context)
     '''
-    context = {'campaign': campaign, 'form': form}
-    return render(request, 'dashboard/ds_raw_24h.html', context)
+    # context = {'campaign': campaign, 'form': form}
+    # return render(request, 'dashboard/ds_raw_24h.html', context)
