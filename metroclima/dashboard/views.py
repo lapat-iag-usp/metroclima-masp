@@ -225,8 +225,6 @@ def graphs_raw_24h_mobile(request, slug):
                              sep=',',
                              usecols=usecols,
                              dtype=dtype,
-                             skiprows=1,
-                             skipinitialspace=True,
                              engine='c'
                              )
             df = df.compute()
@@ -236,7 +234,6 @@ def graphs_raw_24h_mobile(request, slug):
                        'form': form,
                        'script': script, 'div': div}
             return render(request, 'dashboard/ds_raw_24h.html', context)
-        '''
 
         else:
             # form
@@ -248,6 +245,3 @@ def graphs_raw_24h_mobile(request, slug):
     else:
         context = {'campaign': campaign}
         return render(request, 'dashboard/ds_raw_24h.html', context)
-    '''
-    # context = {'campaign': campaign, 'form': form}
-    # return render(request, 'dashboard/ds_raw_24h.html', context)
