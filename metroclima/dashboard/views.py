@@ -228,7 +228,7 @@ def graphs_raw_24h_mobile(request, slug):
                              engine='c'
                              )
             df = df.compute()
-            df['Time'] = pd.to_datetime(df['Time'])
+            df['Time'] = pd.to_datetime(df['Time'], format="%m/%d/%Y%H:%M:%S.%f")
             script, div = bokeh_raw_mobile(df)
             context = {'campaign': campaign,
                        'form': form,
