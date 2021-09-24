@@ -144,7 +144,8 @@ def graphs_raw_24h(request, slug):
         filenames.sort()
         # ignoring last file as a temporary solution to broken line files
         # using "skipfooter" compromises the time of processing
-        filenames = filenames[:-1]
+        if days == dates[0]:
+            filenames = filenames[:-1]
         if filenames:
             df = dd.read_csv(filenames,
                              sep=r'\s+',
