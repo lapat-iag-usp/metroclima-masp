@@ -40,6 +40,9 @@ def graphs_raw(request, slug):
             path + '**/*.dat', recursive=True)]
         if filenames:
             filenames.sort(reverse=True)
+            # ignoring last file as a temporary solution to broken line files
+            # using "skipfooter" compromises the time of processing
+            filenames = filenames[1:]
             file_choices = list(
                 zip(filenames,
                     [filename.split('/')[-1] for filename in filenames]))
@@ -72,7 +75,7 @@ def graphs_raw(request, slug):
                              sep=r'\s+',
                              usecols=usecols,
                              dtype=dtype,
-                             skipfooter=1,
+                             engine='c',
                              )
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
@@ -138,13 +141,16 @@ def graphs_raw_24h(request, slug):
         dtype = dict(zip(usecols, dtype))
         filenames = [filename for filename in glob.iglob(
                 path + days + '/*.dat')]
+        filenames.sort()
+        # ignoring last file as a temporary solution to broken line files
+        # using "skipfooter" compromises the time of processing
+        filenames = filenames[:-1]
         if filenames:
-            filenames.sort()
             df = dd.read_csv(filenames,
                              sep=r'\s+',
                              usecols=usecols,
                              dtype=dtype,
-                             skipfooter=1,
+                             engine='c',
                              )
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
@@ -209,21 +215,18 @@ def graphs_raw_24h_mobile(request, slug):
         dtype = campaign.raw_dtypes.split(',')
         dtype = dict(zip(usecols, dtype))
 
-        # for filename in glob.iglob(path + days + '/*f*.txt*'):
-        #     if filename[-3:] == 'zip':
-        #         with zipfile.ZipFile(filename, 'r') as zip_ref:
-        #             zip_ref.extractall(filename + '/../')
-
         filenames = [filename for filename in glob.iglob(
                 path + days + '/*_f*.txt')]
 
         if filenames:
             filenames.sort()
             df = dd.read_csv(filenames,
+                             sep=',',
                              usecols=usecols,
                              dtype=dtype,
                              skiprows=1,
                              skipinitialspace=True,
+                             engine='c'
                              )
             df = df.compute()
             df['Time'] = pd.to_datetime(df['Time'])
