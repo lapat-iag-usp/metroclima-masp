@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView
 from django.shortcuts import render
+from django.http import HttpResponse
 import glob
 import dask.dataframe as dd
 import pandas as pd
@@ -31,6 +32,7 @@ class DashboardMobileView(DetailView):
 
 @login_required
 def graphs_raw(request, slug):
+    my_download = 0
     campaign = Campaign.objects.get(slug=slug)
 
     # form choices
@@ -66,6 +68,8 @@ def graphs_raw(request, slug):
                 elif '_next' in request.POST:
                     files_name = filenames[idx - 1]
                     form = raw_data_form(initial={'files_name': files_name})
+                elif '_download' in request.POST:
+                    my_download = 1
 
             # dataframe
             usecols = campaign.raw_var_list.split(',')
@@ -80,12 +84,24 @@ def graphs_raw(request, slug):
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
             df = df.drop(['DATE', 'TIME'], axis=1)
+            df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
 
-            script, div = bokeh_raw(df)
-            context = {'campaign': campaign,
-                       'form': form,
-                       'script': script, 'div': div}
-            return render(request, 'dashboard/ds_raw.html', context)
+            if my_download == 1:
+                filename = files_name.split('/')[-1][:-4] + '_df.dat'
+                results = df
+
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+                results.to_csv(path_or_buf=response)
+                return response
+
+            else:
+                script, div = bokeh_raw(df)
+                context = {'campaign': campaign,
+                           'form': form,
+                           'script': script, 'div': div}
+                return render(request, 'dashboard/ds_raw.html', context)
 
         else:
             # form

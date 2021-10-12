@@ -10,8 +10,8 @@ def bokeh_raw(df, color='#1f77b4'):
     source = ColumnDataSource(df)
 
     # variables
-    my_vars = [x for x in df.columns[0:-1] if '_dry' not in x]
-    my_vars_dry = [x for x in df.columns[0:-1] if '_dry' in x]
+    my_vars = [x for x in df.columns[1:] if '_dry' not in x]
+    my_vars_dry = [x for x in df.columns[1:] if '_dry' in x]
 
     # hover tool
     hover_tool_p = HoverTool(
