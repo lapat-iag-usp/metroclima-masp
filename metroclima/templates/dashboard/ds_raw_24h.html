@@ -7,42 +7,45 @@
   <h2 class="display-6">{{ campaign.name }} - Raw data 24h</h2>
   <br>
     {% if campaign.raw_data_path %}
-    <!-- Form -->
     <div align="center">
 
+    <!-- Form -->
     <div class="col-lg-8 col-md-6 mb-1">
         <form action="." method="POST">
         {% csrf_token %}
-
-        <!-- Form fields -->
         <div class="row justify-content-center">
-            <div class="col">
-                <div class="row text-muted" style="font-size: 14px">Choose the day:</div>
-                <div class="row">{{ form.days }}</div>
+            <!-- Form fields -->
+            <div class="row text-muted" style="font-size: 14px">Choose the day:</div>
+            <div class="input-group input-group-sm">
+              {{ form.days }}
+                <button class="btn btn-sm btn-my-download" type="submit" name="_download"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="Download dataframe">
+                    <i class="bi bi-download"></i>
+                </button>
             </div>
+            <!-- Form fields END -->
+            <!-- Form buttons -->
+            <div class="row">
+            <div class="col">
+                <button style='margin-top:5px;' type="submit" name="_prev" class="btn btn-primary btn-sm"
+                 data-bs-toggle="tooltip" data-bs-placement="bottom" title="Previous file">
+                  <i class="bi bi-arrow-left"></i>
+                </button>
+            </div>
+            <div class="col">
+                <button style='margin-top:5px;' type="submit" name="_submit" class="btn btn-primary btn-sm">
+                  Update
+                </button>
+            </div>
+            <div class="col">
+                <button style='margin-top:5px;' type="submit" name="_next" class="btn btn-primary btn-sm"
+                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Next file">
+                  <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+            </div>
+            <!-- Form buttons END -->
         </div>
-        <!-- Form fields END -->
-
-        <!-- Form button -->
-        <div class="row">
-        <div class="col">
-            <button style='margin-top:5px;' type="submit" name="_prev" class="btn btn-primary btn-sm">
-              <i class="bi bi-arrow-left"></i>
-            </button>
-        </div>
-        <div class="col">
-            <button style='margin-top:5px;' type="submit" name="_submit" class="btn btn-primary btn-sm">
-              Update
-            </button>
-        </div>
-        <div class="col">
-            <button style='margin-top:5px;' type="submit" name="_next" class="btn btn-primary btn-sm">
-              <i class="bi bi-arrow-right"></i>
-            </button>
-        </div>
-        </div>
-        <!-- Form button END -->
-
         </form>
     </div>
     <!-- Form END -->

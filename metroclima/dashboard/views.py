@@ -87,13 +87,13 @@ def graphs_raw(request, slug):
             df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
 
             if my_download == 1:
-                filename = files_name.split('/')[-1][:-4] + '_df.dat'
+                filename = campaign.slug + '_' + files_name.split('/')[-1][:-4] + '_df.dat'
                 results = df
 
                 response = HttpResponse(content_type='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
-                results.to_csv(path_or_buf=response)
+                results.to_csv(path_or_buf=response, index=False)
                 return response
 
             else:
@@ -117,6 +117,7 @@ def graphs_raw(request, slug):
 
 @login_required
 def graphs_raw_24h(request, slug):
+    my_download = 0
     campaign = Campaign.objects.get(slug=slug)
 
     # form choices
@@ -150,6 +151,8 @@ def graphs_raw_24h(request, slug):
                 if days > date_choices[0][0]:
                     days = date_choices[-1][0]
                 form = raw_data_24h_form(initial={'days': days})
+            elif '_download' in request.POST:
+                my_download = 1
 
         # dataframe
         usecols = campaign.raw_var_list.split(',')
@@ -172,12 +175,25 @@ def graphs_raw_24h(request, slug):
             df = df.compute()
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
             df = df.drop(['DATE', 'TIME'], axis=1)
+            df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
 
-            script, div = bokeh_raw(df)
-            context = {'campaign': campaign,
-                       'form': form,
-                       'script': script, 'div': div}
-            return render(request, 'dashboard/ds_raw_24h.html', context)
+            if my_download == 1:
+                filename = campaign.slug + '_' + campaign.instrument.serial_number + \
+                           '-' + days.replace('/', '') + '-24Z-DataLog_User_df.dat'
+                results = df
+
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+                results.to_csv(path_or_buf=response, index=False)
+                return response
+
+            else:
+                script, div = bokeh_raw(df)
+                context = {'campaign': campaign,
+                           'form': form,
+                           'script': script, 'div': div}
+                return render(request, 'dashboard/ds_raw_24h.html', context)
 
         else:
             # form
