@@ -9,7 +9,7 @@ class StationAdmin(admin.ModelAdmin):
 
 
 class InstrumentAdmin(admin.ModelAdmin):
-    list_display = ('instrument', 'measuring')
+    list_display = ('instrument', 'serial_number', 'measuring')
     ordering = ['instrument']
 
 
