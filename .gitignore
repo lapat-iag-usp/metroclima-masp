@@ -21,6 +21,9 @@ migrations/
 __pycache__/
 *.pyc
 
+# dedub
+debug.log
+
 # SMOG files
 /metroclima/metroclima.sock
 /metroclima/supervisor.log
