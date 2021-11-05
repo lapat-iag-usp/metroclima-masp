@@ -76,6 +76,9 @@ TEMPLATES = [
                 'dashboard.context_processors.campaigns',
                 'dashboard.context_processors.instruments',
             ],
+            'libraries': {
+                'filter_tags': 'dashboard.templatetags.filter',
+            }
         },
     },
 ]

@@ -1,6 +1,6 @@
 {% extends 'dashboard/ds_base.html' %}
 {% load static %}
-
+{% load filter_tags %}
 
 {% block content %}
 
@@ -9,7 +9,7 @@
   <h4 class="mb-3">Mobile Campaigns</h4>
 
   {% for campaign in campaigns %}
-  {% if campaign.instrument|stringformat:'s' == instrument.instrument|stringformat:'s' %}
+  {% if campaign.instrument|stringformat:'s' == instrument.instrument|addstr:instrument.serial_number %}
   {% if campaign.raw_data_path %}
 
   <ul>
