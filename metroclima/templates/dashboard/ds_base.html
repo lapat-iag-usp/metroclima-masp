@@ -109,6 +109,7 @@
                   <span class="d-none d-sm-inline mx-2">{{ request.user.first_name }}</span></a>
               {% endif %}
                     <ul class="dropdown-menu dropdown-menu-light text-small shadow">
+                      <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
                       <li><a class="dropdown-item" href="{% url 'change_password' %}">Change password</a></li>
                       <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                     </ul>
