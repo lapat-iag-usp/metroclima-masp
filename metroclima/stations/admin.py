@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Instrument, Station, Image
+from .models import Instrument, InstrumentFile, \
+                    Station, Image
 
 
 class StationAdmin(admin.ModelAdmin):
@@ -8,9 +9,14 @@ class StationAdmin(admin.ModelAdmin):
     ordering = ['name']
 
 
+class InstrumentFileInline(admin.TabularInline):
+    model = InstrumentFile
+
+
 class InstrumentAdmin(admin.ModelAdmin):
     list_display = ('instrument', 'serial_number', 'measuring')
     ordering = ['instrument']
+    inlines = [InstrumentFileInline]
 
 
 class ImageAdmin(admin.ModelAdmin):

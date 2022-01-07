@@ -17,6 +17,20 @@ class Instrument(models.Model):
         return super().save(*args, **kwargs)
 
 
+class InstrumentFile(models.Model):
+    file = models.FileField(upload_to="instruments/files/")
+    description = models.CharField(max_length=500)
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.file.url
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+        super(InstrumentFile, self).delete(*args, **kwargs)
+        storage.delete(path)
+
+
 class Station(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=500)
