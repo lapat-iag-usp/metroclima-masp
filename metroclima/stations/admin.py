@@ -4,9 +4,14 @@ from .models import Instrument, InstrumentFile, \
                     Station, Image
 
 
+class ImageInline(admin.TabularInline):
+    model = Image
+
+
 class StationAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'latitude', 'longitude', 'elevation')
     ordering = ['name']
+    inlines = [ImageInline]
 
 
 class InstrumentFileInline(admin.TabularInline):
