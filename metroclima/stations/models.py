@@ -55,6 +55,20 @@ class Station(models.Model):
         super().delete(*args, **kwargs)
 
 
+class StationFile(models.Model):
+    file = models.FileField(upload_to="files/station/")
+    description = models.CharField(max_length=500)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.file.url
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+        super(StationFile, self).delete(*args, **kwargs)
+        storage.delete(path)
+
+
 class Image(models.Model):
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='stations/images/')

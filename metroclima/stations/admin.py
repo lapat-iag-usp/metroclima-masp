@@ -1,17 +1,22 @@
 from django.contrib import admin
 
 from .models import Instrument, InstrumentFile, \
-                    Station, Image
+                    Station, StationFile, \
+                    Image
 
 
 class ImageInline(admin.TabularInline):
     model = Image
 
 
+class StationFileInline(admin.TabularInline):
+    model = StationFile
+
+
 class StationAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'latitude', 'longitude', 'elevation')
     ordering = ['name']
-    inlines = [ImageInline]
+    inlines = [ImageInline, StationFileInline]
 
 
 class InstrumentFileInline(admin.TabularInline):
