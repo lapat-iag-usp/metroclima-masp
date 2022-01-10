@@ -4,6 +4,7 @@ from django.template.defaultfilters import slugify
 
 class Instrument(models.Model):
     instrument = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True, null=True)
     measuring = models.CharField(max_length=50)
     serial_number = models.CharField(max_length=50, null=True)
     mobile_campaign = models.BooleanField(default=False)
