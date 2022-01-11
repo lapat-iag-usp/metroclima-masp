@@ -29,4 +29,3 @@ class Campaign(models.Model):
             self.name = self.station.name + " " + self.instrument.name + " " + str(self.date).replace('-', '')[:-2]
             self.slug = slugify(self.name)
             return super().save(*args, **kwargs)
-        

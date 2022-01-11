@@ -93,7 +93,7 @@
                   <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     {% for instrument in instruments %}
                       {% if instrument.mobile_campaign %}
-                        <li><a href="{% url 'ds_mobile' instrument.slug %}" class="link-light rounded">{{ instrument.instrument }}</a></li>
+                        <li><a href="{% url 'ds_mobile' instrument.slug %}" class="link-light rounded">{{ instrument.name }}</a></li>
                       {% endif %}
                     {% endfor %}
                   </ul>
