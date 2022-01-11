@@ -29,3 +29,18 @@ class Campaign(models.Model):
             self.name = self.station.name + " " + self.instrument.name + " " + str(self.date).replace('-', '')[:-2]
             self.slug = slugify(self.name)
             return super().save(*args, **kwargs)
+
+
+class CampaignFile(models.Model):
+    file = models.FileField(upload_to="files/campaign/")
+    description = models.CharField(max_length=500)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.file.url
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+        super(CampaignFile, self).delete(*args, **kwargs)
+        storage.delete(path)
+
