@@ -21,5 +21,12 @@ class Campaign(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
+        if self.mobile_campaign:
+            self.name = self.instrument.name + " " + self.place + " " + str(self.date).replace('-', '')
+            self.slug = slugify(self.name)
+            return super().save(*args, **kwargs)
+        else:
+            self.name = self.station.name + " " + self.instrument.name + " " + str(self.date).replace('-', '')[:-2]
+            self.slug = slugify(self.name)
+            return super().save(*args, **kwargs)
+        
