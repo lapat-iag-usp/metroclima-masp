@@ -24,8 +24,8 @@ class InstrumentFileInline(admin.TabularInline):
 
 
 class InstrumentAdmin(admin.ModelAdmin):
-    list_display = ('instrument', 'serial_number', 'measuring')
-    ordering = ['instrument']
+    list_display = ('name', 'instrument', 'serial_number', 'measuring')
+    ordering = ['name']
     inlines = [InstrumentFileInline]
 
 
