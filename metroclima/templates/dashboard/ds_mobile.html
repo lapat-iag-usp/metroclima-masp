@@ -4,12 +4,14 @@
 
 {% block content %}
 
-  <h2 class="display-6">{{ instrument.instrument }}</h2>
+  <h2 class="display-6">{{ instrument.name }}</h2>
   <br>
   <h4 class="mb-3">Mobile Campaigns</h4>
 
+  <h2 class="display-6">{{ campaign.instrument.name }}</h2>
+
   {% for campaign in campaigns %}
-  {% if campaign.instrument|stringformat:'s' == instrument.instrument|addstr:instrument.serial_number %}
+  {% if campaign.instrument|stringformat:'s' == instrument.name|stringformat:'s' %}
   {% if campaign.raw_data_path %}
 
   <ul>
