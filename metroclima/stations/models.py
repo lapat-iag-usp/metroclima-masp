@@ -11,10 +11,10 @@ class Instrument(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
 
     def __str__(self):
-        return self.instrument + " " + self.serial_number
+        return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.instrument)
+        self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
 
