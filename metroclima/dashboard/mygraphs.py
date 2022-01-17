@@ -1,10 +1,10 @@
 from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.models import ColumnDataSource, HoverTool, BoxAnnotation
 from bokeh.layouts import column, grid
 
 
-def bokeh_raw(df, color='#1f77b4'):
+def bokeh_raw(df, start_dates, end_dates, color='#1f77b4'):
 
     # source
     source = ColumnDataSource(df)
@@ -34,6 +34,15 @@ def bokeh_raw(df, color='#1f77b4'):
             p.line(x='DATE_TIME', y=my_var + '_dry',
                    legend_label=my_var + '_dry', source=source,
                    line_color=color, alpha=0.5)
+
+        # logbook events - shaded area
+        for start_date, end_date in zip(start_dates, end_dates):
+            box = BoxAnnotation(left=start_date.timestamp() * 1000,
+                                right=end_date.timestamp() * 1000,
+                                fill_alpha=0.4,
+                                fill_color='gray')
+            p.add_layout(box)
+
         p.add_tools(hover_tool_p)
         p.xaxis.visible = False
         p.legend.background_fill_alpha = 0.75
@@ -55,7 +64,7 @@ def bokeh_raw(df, color='#1f77b4'):
     return script, div
 
 
-def bokeh_raw_mobile(df, color='#1f77b4'):
+def bokeh_raw_mobile(df, start_dates, end_dates, color='#1f77b4'):
 
     # source
     source = ColumnDataSource(df)
@@ -85,6 +94,15 @@ def bokeh_raw_mobile(df, color='#1f77b4'):
             p.line(x='Time', y=my_var[:-4] + 'd_ppm',
                    legend_label=my_var[:-4] + 'd_ppm', source=source,
                    line_color=color, alpha=0.5)
+
+        # logbook events - shaded area
+        for start_date, end_date in zip(start_dates, end_dates):
+            box = BoxAnnotation(left=start_date.timestamp() * 1000,
+                         right=end_date.timestamp() * 1000,
+                         fill_alpha=0.4,
+                         fill_color='gray')
+            p.add_layout(box)
+
         p.add_tools(hover_tool_p)
         p.xaxis.visible = False
         p.legend.background_fill_alpha = 0.75

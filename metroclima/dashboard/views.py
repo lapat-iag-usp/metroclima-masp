@@ -5,11 +5,12 @@ from django.http import HttpResponse
 import glob
 import dask.dataframe as dd
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 import zipfile
 
 from stations.models import Station, Instrument
-from .models import Campaign
+from .models import Campaign, Event
 from .mygraphs import bokeh_raw, bokeh_raw_mobile
 from .forms import DataRawFormFunction, DataRaw24hFormFunction
 
@@ -33,7 +34,12 @@ class DashboardMobileView(DetailView):
 @login_required
 def graphs_raw(request, slug):
     my_download = 0
+    invalid = 0
     campaign = Campaign.objects.get(slug=slug)
+    start_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('start_date')
+    end_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('end_date')
+    start_dates = [my_date[0] for my_date in list(start_dates)]
+    end_dates = [my_date[0] for my_date in list(end_dates)]
 
     # form choices
     if campaign.raw_data_path:
@@ -70,6 +76,8 @@ def graphs_raw(request, slug):
                     form = raw_data_form(initial={'files_name': files_name})
                 elif '_download' in request.POST:
                     my_download = 1
+                elif '_invalid' in request.POST:
+                    invalid = 1
 
             # dataframe
             usecols = campaign.raw_var_list.split(',')
@@ -97,7 +105,12 @@ def graphs_raw(request, slug):
                 return response
 
             else:
-                script, div = bokeh_raw(df)
+                if invalid == 1:
+                    for start_date, end_date in zip(start_dates, end_dates):
+                        df.loc[(df['DATE_TIME'] >= start_date.strftime("%Y-%m-%d %H:%M:%S")) &
+                               (df['DATE_TIME'] < end_date.strftime("%Y-%m-%d %H:%M:%S")), df.columns] = np.nan
+
+                script, div = bokeh_raw(df, start_dates, end_dates)
                 context = {'campaign': campaign,
                            'form': form,
                            'script': script, 'div': div}
@@ -118,7 +131,12 @@ def graphs_raw(request, slug):
 @login_required
 def graphs_raw_24h(request, slug):
     my_download = 0
+    invalid = 0
     campaign = Campaign.objects.get(slug=slug)
+    start_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('start_date')
+    end_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('end_date')
+    start_dates = [my_date[0] for my_date in list(start_dates)]
+    end_dates = [my_date[0] for my_date in list(end_dates)]
 
     # form choices
     if campaign.raw_data_path:
@@ -153,6 +171,8 @@ def graphs_raw_24h(request, slug):
                 form = raw_data_24h_form(initial={'days': days})
             elif '_download' in request.POST:
                 my_download = 1
+            elif '_invalid' in request.POST:
+                invalid = 1
 
         # dataframe
         usecols = campaign.raw_var_list.split(',')
@@ -189,7 +209,12 @@ def graphs_raw_24h(request, slug):
                 return response
 
             else:
-                script, div = bokeh_raw(df)
+                if invalid == 1:
+                    for start_date, end_date in zip(start_dates, end_dates):
+                        df.loc[(df['DATE_TIME'] >= start_date.strftime("%Y-%m-%d %H:%M:%S")) &
+                               (df['DATE_TIME'] < end_date.strftime("%Y-%m-%d %H:%M:%S")), df.columns] = np.nan
+
+                script, div = bokeh_raw(df, start_dates, end_dates)
                 context = {'campaign': campaign,
                            'form': form,
                            'script': script, 'div': div}
@@ -210,7 +235,12 @@ def graphs_raw_24h(request, slug):
 @login_required
 def graphs_raw_24h_mobile(request, slug):
     my_download = 0
+    invalid = 0
     campaign = Campaign.objects.get(slug=slug)
+    start_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('start_date')
+    end_dates = Event.objects.filter(logbook__slug='logbook-' + slug, invalid=True).values_list('end_date')
+    start_dates = [my_date[0] for my_date in list(start_dates)]
+    end_dates = [my_date[0] for my_date in list(end_dates)]
 
     # form choices
     if campaign.raw_data_path:
@@ -219,6 +249,7 @@ def graphs_raw_24h_mobile(request, slug):
         dirnames.sort(reverse=True)
         dates = list([filename[-10:] for filename in dirnames])
         date_choices = list(zip(dates, dates))
+
 
         # initial values
         days = dates[0]
@@ -245,6 +276,9 @@ def graphs_raw_24h_mobile(request, slug):
                 form = raw_data_24h_form(initial={'days': days})
             elif '_download' in request.POST:
                 my_download = 1
+            elif '_invalid' in request.POST:
+                invalid = 1
+
 
         # dataframe
         usecols = campaign.raw_var_list.split(',')
@@ -253,6 +287,7 @@ def graphs_raw_24h_mobile(request, slug):
 
         filenames = [filename for filename in glob.iglob(
                 path + days + '/*_f*.txt')]
+
 
         if filenames:
             filenames.sort()
@@ -277,7 +312,12 @@ def graphs_raw_24h_mobile(request, slug):
                 return response
 
             else:
-                script, div = bokeh_raw_mobile(df)
+                if invalid == 1:
+                    for start_date, end_date in zip(start_dates, end_dates):
+                        df.loc[(df['Time'] >= start_date.strftime("%Y-%m-%d %H:%M:%S")) &
+                               (df['Time'] <= end_date.strftime("%Y-%m-%d %H:%M:%S")), df.columns] = np.nan
+
+                script, div = bokeh_raw_mobile(df, start_dates, end_dates)
                 context = {'campaign': campaign,
                            'form': form,
                            'script': script, 'div': div}
