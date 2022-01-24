@@ -37,23 +37,22 @@ class EventAdmin(admin.ModelAdmin):
         js = ('/static/admin/js/hide_attribute.js',)
 
 
-class EventInline(admin.TabularInline):
-    model = Event
-    fields = ['event_date', 'description', 'invalid', 'start_date', 'end_date', 'flags', 'revised']
-    ordering = ['event_date']
-    formfield_overrides = {
-        models.TextField: {'widget': Textarea(attrs={'rows': 6, 'cols': 40})},
-    }
-    show_change_link = True
+# class EventInline(admin.TabularInline):
+#     model = Event
+#     fields = ['event_date', 'description', 'invalid', 'start_date', 'end_date', 'flags', 'revised']
+#     ordering = ['event_date']
+#     formfield_overrides = {
+#         models.TextField: {'widget': Textarea(attrs={'rows': 6, 'cols': 40})},
+#     }
+#     show_change_link = True
 
 
 class LogbookAdmin(admin.ModelAdmin):
     readonly_fields = ('name', 'slug',)
-    inlines = [EventInline]
+    # inlines = [EventInline]
 
 
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(Flag)
 admin.site.register(Event, EventAdmin)
-admin.site.register(EventFile)
 admin.site.register(Logbook, LogbookAdmin)
