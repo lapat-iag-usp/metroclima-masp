@@ -10,4 +10,5 @@ urlpatterns = [
     path('raw-24h/<slug:slug>/', views.graphs_raw_24h, name='ds_raw_24h'),
     path('mobile/<slug:slug>/', login_required(views.DashboardMobileView.as_view()), name='ds_mobile'),
     path('mobile/raw-24h/<slug:slug>/', views.graphs_raw_24h_mobile, name='ds_raw_24h_mobile'),
+    path('export/<slug:slug>/', views.export_logbook_csv, name='export_logbook_csv'),
 ]

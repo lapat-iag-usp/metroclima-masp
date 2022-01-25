@@ -7,12 +7,28 @@ import dask.dataframe as dd
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-import zipfile
+import csv
 
 from stations.models import Station, Instrument
 from .models import Campaign, Event
 from .mygraphs import bokeh_raw, bokeh_raw_mobile
 from .forms import DataRawFormFunction, DataRaw24hFormFunction
+
+
+def export_logbook_csv(request, slug):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format('logbook-' + slug + '.csv')
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'name', 'event_date', 'description', 'invalid', 'start_date', 'end_date', 'flags', 'revised'])
+
+    events = Event.objects.filter(logbook__slug='logbook-' + slug).values_list(
+        'name', 'event_date', 'description', 'invalid', 'start_date', 'end_date', 'flags__flag', 'revised')
+    for event in events:
+        writer.writerow(event)
+
+    return response
 
 
 class DashboardView(TemplateView):
