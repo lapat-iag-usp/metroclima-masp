@@ -100,6 +100,26 @@
   </div>
   {% endif %}
 
+  <!-- Data overview -->
+  <div class="container col-lg-9">
+    <h3 class="display-6 mt-4 mb-4">Data overview
+      <a class="btn btn-dark btn-sm" href="/about#datapolicy" style="float:right">
+          Data policy
+      </a>
+    </h3>
+    <div class="lead" style="font-size:18px">
+      <p>Time series plots show hourly and daily average factory corrected dry mole
+        fractions of CO2 and CH4 in parts per million (ppm).
+        Graphs show uncalibrated data.
+      </p>
+      <!-- Graphs -->
+        {{div | safe}}
+        {{script | safe}}
+      <!-- Graphs END -->
+      <br><br>
+    </div>
+  </div>
+
 </div>
 
 {% endblock %}

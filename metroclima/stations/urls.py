@@ -8,7 +8,8 @@ from . import views
 urlpatterns = [
     path('map/', views.show_map, name='stations_map'),
     path('', views.StationListView.as_view(), name='stations_list'),
-    path('<slug:slug>/', views.StationDetailView.as_view(), name='stations_detail'),
+    # path('<slug:slug>/', views.StationDetailView.as_view(), name='stations_detail'),
+    path('<slug:slug>/', views.station_detail, name='stations_detail'),
 
 ]
 

@@ -27,3 +27,6 @@ debug.log
 # SMOG files
 /metroclima/metroclima.sock
 /metroclima/supervisor.log
+
+# data
+/metroclima/static/data/

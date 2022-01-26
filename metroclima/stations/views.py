@@ -1,8 +1,13 @@
+import os.path
+
 from django.shortcuts import render
 import folium
 from django.views.generic import ListView, DetailView
+import pandas as pd
+from os.path import dirname, join
 
 from .models import Station
+from .mygraphs import station_graphs
 
 
 def show_map(request):
@@ -42,7 +47,23 @@ class StationListView(ListView):
     context_object_name = 'stations'
 
 
-class StationDetailView(DetailView):
-    model = Station
-    template_name = 'stations/stations_detail.html'
-    context_object_name = 'station'
+# class StationDetailView(DetailView):
+#     model = Station
+#     template_name = 'stations/stations_detail.html'
+#     context_object_name = 'station'
+
+
+def station_detail(request, slug):
+    station = Station.objects.get(slug=slug)
+    if os.path.exists(join(dirname(__file__), f'../static/data/{slug}.txt')):
+        df = pd.read_csv(join(dirname(__file__), f'../static/data/{slug}.txt'))
+        df['DATE_TIME'] = pd.to_datetime(df.DATE_TIME)
+        script, div = station_graphs(df)
+        context = {'station': station, 'script': script, 'div': div}
+        return render(request, 'stations/stations_detail.html', context)
+    else:
+        df = pd.DataFrame({'A': []})
+        script, div = station_graphs(df)
+        context = {'station': station}
+        context = {'station': station, 'script': script, 'div': div}
+        return render(request, 'stations/stations_detail.html', context)
