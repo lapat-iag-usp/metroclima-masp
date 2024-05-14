@@ -15,7 +15,7 @@ def show_map(request):
     m = folium.Map(
         location=[-23.52, -46.633],
         zoom_start=11,
-        tiles='Stamen Terrain'
+        tiles='OpenStreetMap'
     )
     stations = Station.objects.all()
     for station in stations:
