@@ -52,7 +52,12 @@ class LogbookAdmin(admin.ModelAdmin):
     # inlines = [EventInline]
 
 
+class FlagAdmin(admin.ModelAdmin):
+    list_display = ('flag', 'description')
+    ordering = ['flag']
+
+
 admin.site.register(Campaign, CampaignAdmin)
-admin.site.register(Flag)
+admin.site.register(Flag, FlagAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Logbook, LogbookAdmin)
