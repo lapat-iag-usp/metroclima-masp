@@ -1,12 +1,15 @@
 from django import forms
 
 
-def DataRawFormFunction(file_choices):
+def DataRawFormFunction(file_choices, variable_choices):
 
     class DataRawForm(forms.Form):
-        files_name = forms.ChoiceField(widget=forms.Select(
-            attrs={'class': 'form-select form-select-sm'}),
+        files_name = forms.ChoiceField(
+            widget=forms.Select(attrs={'class': 'form-select form-select-sm'}),
             choices=file_choices)
+        variable_name = forms.ChoiceField(
+            widget=forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            choices=variable_choices)
 
     return DataRawForm
 

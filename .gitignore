@@ -30,3 +30,6 @@ debug.log
 
 # data
 /metroclima/static/data/
+
+marcia.py
+logbook.csv

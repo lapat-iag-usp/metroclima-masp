@@ -2,16 +2,18 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView
 from django.shortcuts import render
 from django.http import HttpResponse
+import os
 import glob
 import dask.dataframe as dd
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import csv
+import xarray as xr
 
 from stations.models import Station, Instrument
 from .models import Campaign, Event
-from .mygraphs import bokeh_raw, bokeh_raw_mobile
+from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0
 from .forms import DataRawFormFunction, DataRaw24hFormFunction
 
 
@@ -349,3 +351,77 @@ def graphs_raw_24h_mobile(request, slug):
     else:
         context = {'campaign': campaign}
         return render(request, 'dashboard/ds_raw_24h.html', context)
+
+
+@login_required
+def graphs_level_0(request, slug):
+    my_download = 0
+    invalid = 0
+    campaign = Campaign.objects.get(slug=slug)
+
+    # form choices
+    if campaign.level_0_data_path:
+        path = str(campaign.level_0_data_path)
+        filenames = [filename for filename in glob.iglob(os.path.join(path, '*.nc'), recursive=True)]
+        if filenames:
+            filenames.sort(reverse=True)
+            file_choices = list(
+                zip(filenames,
+                    [os.path.basename(filename) for filename in filenames]))
+
+            # initial values
+            files_name = filenames[0]
+
+            # dataset
+            ds = xr.open_dataset(files_name)
+            exclude_vars = {"time", "FM", "FA", "CAL"}
+            variable_choices = [(var, var) for var in ds.data_vars.keys() if var not in exclude_vars]
+            variable_name = next((var for var, _ in variable_choices if "CO2" in var), variable_choices[0][0])
+            initial_data = {'files_name': files_name, 'variable_name': variable_name}
+
+            # form
+            raw_data_form = DataRawFormFunction(file_choices, variable_choices)
+            form = raw_data_form(request.POST or None, initial=initial_data)
+            if form.is_valid():
+                files_name = request.POST.get('files_name')
+                variable_name = request.POST.get('variable_name')
+                idx = filenames.index(files_name)
+                if '_prev' in request.POST:
+                    if idx + 1 > (len(filenames) - 1):
+                        files_name = filenames[idx + 1 - (len(filenames))]
+                    else:
+                        files_name = filenames[idx + 1]
+                    form = raw_data_form(initial={'files_name': files_name})
+                elif '_next' in request.POST:
+                    files_name = filenames[idx - 1]
+                    form = raw_data_form(initial={'files_name': files_name})
+                elif '_download' in request.POST:
+                    my_download = 1
+                elif '_invalid' in request.POST:
+                    invalid = 1
+
+            if my_download == 1:
+                pass
+
+            else:
+                if invalid == 1:
+                    mask = (ds['FM'] == 0) & (ds['FA'] == 0) & (ds['CAL'] == 0)
+                    ds[variable_name] = ds[variable_name].where(mask)
+
+                script, div = bokeh_level_0(ds, variable_name)
+                context = {'campaign': campaign,
+                           'form': form,
+                           'script': script, 'div': div}
+                return render(request, 'dashboard/ds_level_0.html', context)
+
+        else:
+            # form
+            raw_data_form = DataRawFormFunction([('', 'no data available')])
+            form = raw_data_form(request.POST or None)
+            context = {'campaign': campaign, 'form': form}
+            return render(request, 'dashboard/ds_level_0.html', context)
+
+    else:
+        context = {'campaign': campaign}
+        return render(request, 'dashboard/ds_level_0.html', context)
+

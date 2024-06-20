@@ -84,6 +84,22 @@
                 </div>
               </li>
 
+              <!-- Raw data 24 hour graphs - campaigns -->
+              <li class="mb-1">
+                <button class="btn btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#data_level_0-collapse">
+                 Data level 0
+                </button>
+                <div class="collapse" id="data_level_0-collapse">
+                  <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    {% for campaign in campaigns %}
+                    {% if not campaign.mobile_campaign %}
+                    <li><a href="{% url 'ds_level_0' campaign.slug %}" class="link-light rounded">{{ campaign.name }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              </li>
+
               <!-- Mobile campaigns -->
               <li class="mb-1">
                 <button class="btn btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#mobile-campaigns">
