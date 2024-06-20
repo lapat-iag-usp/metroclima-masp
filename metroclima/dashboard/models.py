@@ -10,6 +10,7 @@ class Campaign(models.Model):
     instrument = models.ForeignKey(Instrument, on_delete=models.SET_NULL, blank=True, null=True)
     date = models.DateField(help_text="Please use the following format: YYYY-MM-DD.", null=True)
     raw_data_path = models.CharField(max_length=250, blank=True, null=True)
+    level_0_data_path = models.CharField(max_length=250, blank=True, null=True)
     raw_var_list = models.CharField(max_length=250, blank=True, null=True)
     raw_dtypes = models.CharField(max_length=250, blank=True, null=True)
     mobile_campaign = models.BooleanField(default=False)
