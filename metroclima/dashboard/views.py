@@ -14,7 +14,7 @@ import xarray as xr
 from stations.models import Station, Instrument
 from .models import Campaign, Event
 from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0
-from .forms import DataRawFormFunction, DataRaw24hFormFunction
+from .forms import DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction
 
 
 def export_logbook_csv(request, slug):
@@ -380,7 +380,7 @@ def graphs_level_0(request, slug):
             initial_data = {'files_name': files_name, 'variable_name': variable_name}
 
             # form
-            raw_data_form = DataRawFormFunction(file_choices, variable_choices)
+            raw_data_form = DataLevel0FormFunction(file_choices, variable_choices)
             form = raw_data_form(request.POST or None, initial=initial_data)
             if form.is_valid():
                 files_name = request.POST.get('files_name')
@@ -416,7 +416,7 @@ def graphs_level_0(request, slug):
 
         else:
             # form
-            raw_data_form = DataRawFormFunction([('', 'no data available')])
+            raw_data_form = DataLevel0FormFunction([('', 'no data available')], [('', 'no data available')])
             form = raw_data_form(request.POST or None)
             context = {'campaign': campaign, 'form': form}
             return render(request, 'dashboard/ds_level_0.html', context)
