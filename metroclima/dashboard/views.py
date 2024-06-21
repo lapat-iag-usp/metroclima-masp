@@ -378,6 +378,7 @@ def graphs_level_0(request, slug):
             variable_choices = [(var, var) for var in ds.data_vars.keys() if var not in exclude_vars]
             variable_name = next((var for var, _ in variable_choices if "CO2" in var), variable_choices[0][0])
             initial_data = {'files_name': files_name, 'variable_name': variable_name}
+            ds.close()
 
             # form
             raw_data_form = DataLevel0FormFunction(file_choices, variable_choices)
@@ -399,6 +400,9 @@ def graphs_level_0(request, slug):
                     my_download = 1
                 elif '_invalid' in request.POST:
                     invalid = 1
+
+            # TODO: Think in a better solution than opening the dataset twice!
+            ds = xr.open_dataset(files_name)
 
             if my_download == 1:
                 pass
