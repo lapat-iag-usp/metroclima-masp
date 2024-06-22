@@ -373,12 +373,23 @@ def graphs_level_0(request, slug):
             files_name = filenames[0]
 
             # dataset
-            ds = xr.open_dataset(files_name)
-            exclude_vars = {"time", "FM", "FA", "CAL"}
-            variable_choices = [(var, var) for var in ds.data_vars.keys() if var not in exclude_vars]
-            variable_name = next((var for var, _ in variable_choices if "CO2" in var), variable_choices[0][0])
+            # ds = xr.open_dataset(files_name)
+            # exclude_vars = {"time", "FM", "FA", "CAL"}
+            # variable_choices = [(var, var) for var in ds.data_vars.keys() if var not in exclude_vars]
+            # variable_name = next((var for var, _ in variable_choices if "CO2" in var), variable_choices[0][0])
+            # initial_data = {'files_name': files_name, 'variable_name': variable_name}
+            # ds.close()
+
+            # NOTE: Temporary fix!
+            variable_choices = [('CO2', 'CO2'), ('CO2_dry', 'CO2_dry'),
+                                ('CH4', 'CH4'), ('CH4_dry', 'CH4_dry'),
+                                ('H2O', 'H2O'),
+                                ('solenoid_valves', 'solenoid_valves'),
+                                ('MPVPosition', 'MPVPosition'),
+                                ('CavityTemp', 'CavityTemp'),
+                                ('CavityPressure', 'CavityPressure')]
+            variable_name = 'CO2'
             initial_data = {'files_name': files_name, 'variable_name': variable_name}
-            ds.close()
 
             # form
             raw_data_form = DataLevel0FormFunction(file_choices, variable_choices)
