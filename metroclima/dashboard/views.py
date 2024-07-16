@@ -211,6 +211,12 @@ def graphs_raw_24h(request, slug):
                              engine='c',
                              )
             df = df.compute()
+
+            if 'species' in df.columns:
+                # TODO: The specie value is subject to change and should be configurable by the user
+                df = df[df.species == 1]
+                df = df.drop(['species'], axis=1)
+
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
             df = df.drop(['DATE', 'TIME'], axis=1)
             df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
