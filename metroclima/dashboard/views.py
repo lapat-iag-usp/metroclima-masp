@@ -54,7 +54,7 @@ def data_overview(request):
     campaigns = Campaign.objects.all()
     dataframes = []
     for campaign in campaigns:
-        if campaign.raw_data_path and str(campaign.station) in ['IAG', 'Pico do Jaragua']:
+        if campaign.raw_data_path and str(campaign.station) in ['IAG', 'Pico do Jaraguá'] and str(campaign.instrument) != 'ABB':
             path = campaign.raw_data_path
             filenames = [filename for filename in glob.iglob(path + '**/*.dat', recursive=True)]
             datetime_list = []
