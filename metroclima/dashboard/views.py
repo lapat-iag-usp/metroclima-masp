@@ -56,7 +56,7 @@ def data_overview(request):
     for campaign in campaigns:
         if campaign.raw_data_path and str(campaign.station) in ['IAG', 'Pico do Jaraguá'] and str(campaign.instrument) != 'ABB':
             path = campaign.raw_data_path
-            filenames = [filename for filename in glob.iglob(path + '**/*.dat', recursive=True)]
+            filenames = [os.path.basename(filename) for filename in glob.iglob(path + '**/*.dat', recursive=True)]
             datetime_list = []
             for filename in filenames:
                 date_time_str = filename.split('-')[1] + ' ' + filename.split('-')[2]
