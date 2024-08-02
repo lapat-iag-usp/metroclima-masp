@@ -1,7 +1,61 @@
 from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import ColumnDataSource, HoverTool, BoxAnnotation
+from bokeh.models import ColumnDataSource, HoverTool, BoxAnnotation, WheelZoomTool
 from bokeh.layouts import column, grid
+import pandas as pd
+from datetime import timedelta
+import numpy as np
+
+
+def find_date_gaps(df):
+    campaigns = []
+    start_dates = []
+    end_dates = []
+
+    for campaign, group in df.groupby('campaign'):
+        group = group.sort_values('date')
+        start_date = None
+        end_date = None
+
+        for i, row in group.iterrows():
+            if start_date is None:
+                start_date = row['date']
+                end_date = row['date']
+            elif row['date'] == end_date + timedelta(hours=1):
+                end_date = row['date']
+            else:
+                campaigns.append(campaign)
+                start_dates.append(start_date)
+                end_dates.append(end_date)
+                start_date = row['date']
+                end_date = row['date']
+
+        campaigns.append(campaign)
+        start_dates.append(start_date)
+        end_dates.append(end_date)
+
+    return pd.DataFrame({'campaign': campaigns, 'start_date': start_dates, 'end_date': end_dates})
+
+
+def data_overview_graph(df):
+    gaps_df = find_date_gaps(df)
+    source = ColumnDataSource(gaps_df)
+
+    p = figure(y_range=gaps_df['campaign'].unique(), x_axis_type='datetime',
+               width=1100, height=600, toolbar_location='right',
+               tools="pan, box_zoom, reset")
+
+    p.hbar(y="campaign", left='start_date', right='end_date', height=0.4, source=source)
+
+    wheel_zoom_x = WheelZoomTool(dimensions='width')
+    p.add_tools(wheel_zoom_x)
+    p.ygrid.grid_line_color = None
+    p.xaxis.axis_label = "Date"
+    p.outline_line_color = None
+
+    script, div = components(p)
+
+    return script, div
 
 
 def find_intervals(df, problem_var):

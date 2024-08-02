@@ -13,7 +13,7 @@ import xarray as xr
 
 from stations.models import Station, Instrument
 from .models import Campaign, Event
-from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0
+from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0, data_overview_graph
 from .forms import DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction
 
 
@@ -47,6 +47,32 @@ class DashboardMobileView(DetailView):
     model = Instrument
     template_name = 'dashboard/ds_mobile.html'
     context_object_name = 'instrument'
+
+
+@login_required
+def data_overview(request):
+    campaigns = Campaign.objects.all()
+    dataframes = []
+    for campaign in campaigns:
+        if campaign.raw_data_path:
+            path = campaign.raw_data_path
+            filenames = [filename for filename in glob.iglob(path + '**/*.dat', recursive=True)]
+            datetime_list = []
+            for filename in filenames:
+                date_time_str = filename.split('-')[1] + ' ' + filename.split('-')[2]
+                date_time_obj = datetime.strptime(date_time_str, '%Y%m%d %H%M%SZ')
+                datetime_list.append(date_time_obj.strftime('%Y-%m-%d %H'))
+            datetime_list.sort()
+            temp_df = pd.DataFrame({
+                'campaign': [campaign.name] * len(datetime_list),
+                'date': datetime_list
+            })
+            dataframes.append(temp_df)
+    df = pd.concat(dataframes, ignore_index=True)
+    df.date = pd.to_datetime(df.date)
+    script, div = data_overview_graph(df)
+    context = {'script': script, 'div': div}
+    return render(request, 'dashboard/ds_home.html', context)
 
 
 @login_required
