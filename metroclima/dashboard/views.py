@@ -65,10 +65,12 @@ def data_overview(request):
             datetime_list.sort()
             temp_df = pd.DataFrame({
                 'campaign': [campaign.name] * len(datetime_list),
+                'station': [str(campaign.station)] * len(datetime_list),
                 'date': datetime_list
             })
             dataframes.append(temp_df)
     df = pd.concat(dataframes, ignore_index=True)
+    df = df.drop_duplicates()
     df.date = pd.to_datetime(df.date)
     script, div = data_overview_graph(df)
     context = {'script': script, 'div': div}

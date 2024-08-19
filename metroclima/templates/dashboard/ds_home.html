@@ -3,13 +3,20 @@
 
 
 {% block content %}
-
     <h2 class="display-6">Dashboard</h2>
     <br>
+    <h4 class="mb-3">Data overview</h4>
 
-    <!-- Dashboard -->
+    <div class="container col-lg-12">
+        <!-- Dashboard -->
         {{div | safe}}
         {{script | safe}}
-    <!-- Dashboard END -->
+        <!-- Dashboard END -->
+        <p>Este gráfico mostra a disponibilidade dos dados armazenados na SMOG organizados por campanha de medição.
+            A disponibilidade do dado é identificada através da data e do horário no nome dos arquivos que estão no diretório definido no cadastro da campanha de medição.
+            A menor unidade de tempo considerada é a hora, portanto, considera-se que toda hora medida é uma hora completa.
+        </p>
+    </div>
+
 
 {% endblock %}

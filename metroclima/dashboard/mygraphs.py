@@ -11,11 +11,13 @@ def find_date_gaps(df):
     campaigns = []
     start_dates = []
     end_dates = []
+    stations = []
 
     for campaign, group in df.groupby('campaign'):
         group = group.sort_values('date')
         start_date = None
         end_date = None
+        station = group['station'].iloc[0]
 
         for i, row in group.iterrows():
             if start_date is None:
@@ -29,17 +31,34 @@ def find_date_gaps(df):
                 end_dates.append(end_date)
                 start_date = row['date']
                 end_date = row['date']
+                stations.append(station)
 
         campaigns.append(campaign)
         start_dates.append(start_date)
         end_dates.append(end_date)
+        stations.append(station)
 
-    return pd.DataFrame({'campaign': campaigns, 'start_date': start_dates, 'end_date': end_dates})
+    return pd.DataFrame({'station': stations, 'campaign': campaigns, 'start_date': start_dates, 'end_date': end_dates})
 
 
 def data_overview_graph(df):
     gaps_df = find_date_gaps(df)
+    gaps_df['end_date'] = pd.to_datetime(gaps_df['end_date']) + pd.to_timedelta(59, unit='m')
+    gaps_df.sort_values('start_date', ascending=True, inplace=True)
+    gaps_df.sort_values('station', ascending=False, inplace=True)
+    print(gaps_df.head())
     source = ColumnDataSource(gaps_df)
+
+    hover = HoverTool()
+    hover.tooltips = [
+        ("Start date", "@start_date{%m/%d/%Y %H:%M}"),
+        ("End date", "@end_date{%m/%d/%Y %H:%M}"),
+        ("Campaign", "@campaign"),
+    ]
+    hover.formatters = {
+        '@start_date': 'datetime',
+        '@end_date': 'datetime',
+    }
 
     p = figure(y_range=gaps_df['campaign'].unique(), x_axis_type='datetime',
                width=1100, height=600, toolbar_location='right',
@@ -49,6 +68,7 @@ def data_overview_graph(df):
 
     wheel_zoom_x = WheelZoomTool(dimensions='width')
     p.add_tools(wheel_zoom_x)
+    p.add_tools(hover)
     p.ygrid.grid_line_color = None
     p.xaxis.axis_label = "Date"
     p.outline_line_color = None
