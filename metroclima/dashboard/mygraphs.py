@@ -46,7 +46,6 @@ def data_overview_graph(df):
     gaps_df['end_date'] = pd.to_datetime(gaps_df['end_date']) + pd.to_timedelta(59, unit='m')
     gaps_df.sort_values('start_date', ascending=True, inplace=True)
     gaps_df.sort_values('station', ascending=False, inplace=True)
-    print(gaps_df.head())
     source = ColumnDataSource(gaps_df)
 
     hover = HoverTool()
