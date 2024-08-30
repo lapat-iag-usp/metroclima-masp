@@ -11,46 +11,51 @@
 
     <!-- Form -->
     <div class="col-lg-8 col-md-6 mb-1">
-        <form action="." method="POST">
+    <form method="post">
         {% csrf_token %}
         <div class="row justify-content-center">
+
             <!-- Form fields -->
-            <div class="row text-muted" style="font-size: 14px">Choose the file:</div>
-            <div class="input-group input-group-sm">
-              {{ form.files_name }}
-                <button class="btn btn-sm btn-my-download" type="submit" name="_download"
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Download dataframe">
-                    <i class="bi bi-download"></i>
-                </button>
-                <button class="btn btn-sm btn-my-download" type="submit" name="_invalid"
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Invalid data">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            </div>
+            <div class="row text-muted" style="font-size: 14px">Choose the year and press update:</div>
+            <div class="input-group input-group-sm">{{ form_year.year }}</div>
+
+            {% if form_file %}
+                <div class="row text-muted" style="font-size: 14px">Choose the file and press update again:</div>
+                <div class="input-group input-group-sm">{{ form_file.file }}
+                    <button class="btn btn-sm btn-my-download" type="submit" name="_download"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Download dataframe">
+                            <i class="bi bi-download"></i></button>
+                    <button class="btn btn-sm btn-my-download" type="submit" name="_invalid"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Invalid data">
+                            <i class="bi bi-x-circle"></i></button>
+                </div>
+            {% endif %}
             <!-- Form fields END -->
+
             <!-- Form buttons -->
             <div class="row">
             <div class="col">
-                <button style='margin-top:5px;' type="submit" name="_prev" class="btn btn-primary btn-sm"
+                <button style='margin-top:5px;' type="submit" name="action" value="previous" class="btn btn-primary btn-sm"
                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Previous file">
                   <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
             <div class="col">
-                <button style='margin-top:5px;' type="submit" name="_submit" class="btn btn-primary btn-sm">
+                <button style='margin-top:5px;' type="submit" name="action" value="select" class="btn btn-primary btn-sm">
                   Update
                 </button>
             </div>
             <div class="col">
-                <button style='margin-top:5px;' type="submit" name="_next" class="btn btn-primary btn-sm"
+                <button style='margin-top:5px;' type="submit" name="action" value="next" class="btn btn-primary btn-sm"
                 data-bs-toggle="tooltip" data-bs-placement="bottom" title="Next file">
                   <i class="bi bi-arrow-right"></i>
                 </button>
             </div>
             </div>
             <!-- Form buttons END -->
+
         </div>
-        </form>
+    </form>
     </div>
     <!-- Form END -->
 

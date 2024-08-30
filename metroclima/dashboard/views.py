@@ -14,7 +14,8 @@ import xarray as xr
 from stations.models import Station, Instrument
 from .models import Campaign, Event
 from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0, data_overview_graph
-from .forms import DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction
+from .forms import (DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction,
+                    YearFormFunction)
 
 
 def export_logbook_csv(request, slug):
@@ -87,7 +88,6 @@ def graphs_raw(request, slug):
     start_dates = [my_date[0] for my_date in list(start_dates)]
     end_dates = [my_date[0] for my_date in list(end_dates)]
 
-    # form choices
     if campaign.raw_data_path:
         path = campaign.raw_data_path
         filenames = [filename for filename in glob.iglob(
@@ -97,79 +97,109 @@ def graphs_raw(request, slug):
             # ignoring last file as a temporary solution to broken line files
             # using "skipfooter" compromises the time of processing
             filenames = filenames[1:]
-            file_choices = list(
-                zip(filenames,
-                    [filename.split('/')[-1] for filename in filenames]))
+            names = [os.path.basename(filename) for filename in filenames]
 
-            # initial values
-            files_name = filenames[0]
-            initial_data = {'files_name': files_name}
+            # form choices
+            years_list = sorted(set([name.split('-')[1][:4] for name in names]), reverse=True)
+            files_dict = {}
+            for year in years_list:
+                filtered_names = [name for name in names if name.split('-')[1].startswith(year)]
+                filtered_filenames = [filename for filename in filenames if
+                                      os.path.basename(filename) in filtered_names]
+                files_dict[year] = list(zip(filtered_filenames, filtered_names))
+            years_choices = list(zip(years_list, years_list))
 
-            # form
-            raw_data_form = DataRawFormFunction(file_choices)
-            form = raw_data_form(request.POST or None, initial=initial_data)
-            if form.is_valid():
-                files_name = request.POST.get('files_name')
-                idx = filenames.index(files_name)
-                if '_prev' in request.POST:
-                    if idx + 1 > (len(filenames) - 1):
-                        files_name = filenames[idx + 1 - (len(filenames))]
-                    else:
-                        files_name = filenames[idx + 1]
-                    form = raw_data_form(initial={'files_name': files_name})
-                elif '_next' in request.POST:
-                    files_name = filenames[idx - 1]
-                    form = raw_data_form(initial={'files_name': files_name})
-                elif '_download' in request.POST:
-                    my_download = 1
-                elif '_invalid' in request.POST:
-                    invalid = 1
+            # initial forms
+            year_form = YearFormFunction(years_choices)
+            form_year = year_form(request.POST or None)
+            form_file = None
+            selected_file = None
 
-            # dataframe
-            usecols = campaign.raw_var_list.split(',')
-            dtype = campaign.raw_dtypes.split(',')
-            dtype = dict(zip(usecols, dtype))
-            df = dd.read_csv(files_name,
-                             sep=r'\s+',
-                             usecols=usecols,
-                             dtype=dtype,
-                             engine='c',
-                             )
-            df = df.compute()
-            df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
-            df = df.drop(['DATE', 'TIME'], axis=1)
-            df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
+            # forms
+            if request.method == 'POST':
+                form_year = year_form(request.POST)
+                if form_year.is_valid():
+                    selected_year = form_year.cleaned_data['year']
+                    file_form = DataRawFormFunction(files_dict, selected_year)
+                    form_file = file_form(request.POST)
+                    if form_file.is_valid():
+                        selected_file = form_file.cleaned_data['file']
+                        action = request.POST.get('action')
+                        idx_list = [name for name in names if name.split('-')[1].startswith(selected_year)]
+                        files_list = [filename for filename in filenames if os.path.basename(filename) in idx_list]
+                        idx = idx_list.index(os.path.basename(selected_file))
+                        if action == 'previous' and idx < len(files_list) - 1:
+                            selected_file = files_list[idx + 1]
+                        elif action == 'next' and idx > 0:
+                            selected_file = files_list[idx - 1]
+                        form_file = file_form(initial={'file': selected_file})
+                        if '_download' in request.POST:
+                            my_download = 1
+                        elif '_invalid' in request.POST:
+                            invalid = 1
 
-            if my_download == 1:
-                filename = campaign.slug + '_' + files_name.split('/')[-1][:-4] + '_df.dat'
-                results = df
+                        # dataframe
+                        usecols = campaign.raw_var_list.split(',')
+                        dtype = campaign.raw_dtypes.split(',')
+                        dtype = dict(zip(usecols, dtype))
+                        df = dd.read_csv(selected_file,
+                                         sep=r'\s+',
+                                         usecols=usecols,
+                                         dtype=dtype,
+                                         engine='c')
+                        df = df.compute()
+                        df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
+                        df = df.drop(['DATE', 'TIME'], axis=1)
+                        df = df[['DATE_TIME'] + [col for col in df.columns if col != 'DATE_TIME']]
 
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename=%s' % filename
+                        # download dataframe
+                        if my_download == 1:
+                            filename = campaign.slug + '_' + os.path.basename(selected_file)
+                            results = df
 
-                results.to_csv(path_or_buf=response, index=False)
-                return response
+                            response = HttpResponse(content_type='text/csv')
+                            response['Content-Disposition'] = f'attachment; filename={filename}'
 
-            else:
-                if invalid == 1:
-                    for start_date, end_date in zip(start_dates, end_dates):
-                        df.loc[(df['DATE_TIME'] >= start_date.strftime("%Y-%m-%d %H:%M:%S")) &
-                               (df['DATE_TIME'] < end_date.strftime("%Y-%m-%d %H:%M:%S")), df.columns] = np.nan
+                            results.to_csv(path_or_buf=response, index=False)
+                            return response
 
-                script, div = bokeh_raw(df, start_dates, end_dates)
-                context = {'campaign': campaign,
-                           'form': form,
-                           'script': script, 'div': div}
-                return render(request, 'dashboard/ds_raw.html', context)
+                        # remove invalid data
+                        elif invalid == 1:
+                            if invalid == 1:
+                                for start_date, end_date in zip(start_dates, end_dates):
+                                    df.loc[(df['DATE_TIME'] >= start_date.strftime("%Y-%m-%d %H:%M:%S")) &
+                                           (df['DATE_TIME'] < end_date.strftime("%Y-%m-%d %H:%M:%S")), df.columns] = np.nan
 
-        else:
-            # form
-            raw_data_form = DataRawFormFunction([('', 'no data available')])
-            form = raw_data_form(request.POST or None)
-            context = {'campaign': campaign, 'form': form}
+                            script, div = bokeh_raw(df, start_dates, end_dates)
+                            context = {'campaign': campaign,
+                                       'form_year': form_year,
+                                       'form_file': form_file,
+                                       'selected_file': selected_file,
+                                       'script': script, 'div': div}
+                            return render(request, 'dashboard/ds_raw.html', context)
+
+                        script, div = bokeh_raw(df, start_dates, end_dates)
+                        context = {'campaign': campaign,
+                                   'form_year': form_year,
+                                   'form_file': form_file,
+                                   'selected_file': selected_file,
+                                   'script': script, 'div': div}
+                        return render(request, 'dashboard/ds_raw.html', context)
+
+            context = {'campaign': campaign,
+                       'form_year': form_year,
+                       'form_file': form_file,
+                       'selected_file': selected_file}
             return render(request, 'dashboard/ds_raw.html', context)
 
-    else:
+        else:  # no filenames
+            year_form = YearFormFunction([('', 'no data available')])
+            form_year = year_form(request.POST or None)
+            context = {'campaign': campaign,
+                       'form_year': form_year}
+            return render(request, 'dashboard/ds_raw.html', context)
+
+    else:  # no campaign
         context = {'campaign': campaign}
         return render(request, 'dashboard/ds_raw.html', context)
 
