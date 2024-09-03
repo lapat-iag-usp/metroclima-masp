@@ -92,7 +92,7 @@ def find_intervals(df, problem_var):
     return intervals
 
 
-def bokeh_raw(df, start_dates, end_dates, color='#1f77b4'):
+def bokeh_raw(df, start_dates, end_dates, color='#1f77b4', color_dry="#ff7f0e"):
     # source
     source = ColumnDataSource(df)
 
@@ -104,23 +104,24 @@ def bokeh_raw(df, start_dates, end_dates, color='#1f77b4'):
     hover_tool_p = HoverTool(
         tooltips=[('date', '@DATE_TIME{%m/%d/%Y %H:%M:%S}'),
                   ('value', '$y')],
-        formatters={'@DATE_TIME': 'datetime'})
+        formatters={'@DATE_TIME': 'datetime'},
+        mode='vline')
 
     plots = []
     i = 0
     for my_var in my_vars:
-        p = figure(plot_height=100,
+        p = figure(plot_height=150,
                    plot_width=900,
                    toolbar_location='right',
                    tools="pan, box_zoom, reset",
                    x_axis_type="datetime",
                    x_axis_location="below")
-        p.line(x='DATE_TIME', y=my_var,
-               legend_label=my_var, source=source, line_color=color)
+        p.scatter(x='DATE_TIME', y=my_var,
+                  legend_label=my_var, source=source, line_color=color, fill_color=color, size=0.65, alpha=0.7)
         if my_var + '_dry' in my_vars_dry:
-            p.line(x='DATE_TIME', y=my_var + '_dry',
-                   legend_label=my_var + '_dry', source=source,
-                   line_color=color, alpha=0.5)
+            p.scatter(x='DATE_TIME', y=my_var + '_dry',
+                      legend_label=my_var + '_dry', source=source,
+                      line_color=color_dry, fill_color=color_dry, size=0.65, alpha=0.7)
 
         # logbook events - shaded area
         for start_date, end_date in zip(start_dates, end_dates):
@@ -131,7 +132,8 @@ def bokeh_raw(df, start_dates, end_dates, color='#1f77b4'):
             p.add_layout(box)
 
         p.add_tools(hover_tool_p)
-        p.xaxis.visible = False
+        p.toolbar.active_inspect = None
+        p.xaxis.visible = True
         p.legend.background_fill_alpha = 0.75
         p.legend.click_policy = "hide"
         p.legend.spacing = 0
