@@ -1,0 +1,26 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+{% block content %}
+    <h2 class="display-6">Tutorials</h2>
+    <br>
+
+    <div class="container col-lg-12">
+        <ul class="list-group">
+            {% for video in videos %}
+            <li class="list-group-item">
+                <div class="d-flex align-items-center">
+                    <a href="{{ video.link }}" target="_blank">
+                        <img class="mr-3" src="{{ video.get_youtube_thumbnail }}" alt="Thumbnail do {{ video.title }}" style="width: 120px; height: 68px; object-fit: cover; margin-right: 15px;">
+                    </a>
+                    <div class="ml-3">
+                        <h6>{{ video.title }}</h6>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+

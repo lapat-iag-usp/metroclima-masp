@@ -4,50 +4,10 @@
 
 {% block content %}
     <h2 class="display-6">Dashboard</h2>
+    <br>
 
     <a href="https://docs.google.com/document/d/1Q27zpniNG-ZdAIPuHix118fxqwCXUInTpv8A8aCUMsg/edit?usp=sharing" target="_blank" class="btn btn-link">
             <i class="bi bi-file-earmark-text me-1"></i> README
     </a>
-
-    <br>
-    <br>
-    <h4 class="mb-3">Data overview</h4>
-
-    <div class="container col-lg-12">
-        <!-- Dashboard -->
-        {{div | safe}}
-        {{script | safe}}
-        <!-- Dashboard END -->
-        <p>Este gráfico mostra a disponibilidade dos dados armazenados na SMOG organizados por campanha de medição.
-            A disponibilidade do dado é identificada através da data e do horário no nome dos arquivos que estão no diretório definido no cadastro da campanha de medição.
-            A menor unidade de tempo considerada é a hora, portanto, considera-se que toda hora medida é uma hora completa.
-        </p>
-    </div>
-
-    <br>
-    <h4 class="mb-3" id="tutorials-section">Tutorials</h4>
-
-    <div class="container col-lg-12">
-        <div>
-        <i class="bi bi-youtube"></i>
-        <a href="https://www.youtube.com/watch?v=4V9qnd9j17A" target="_blank">
-            Processamento de Dados de GHG na Estação UNICID | Projeto Metroclima - Parte 1
-        </a>
-        </div>
-
-        <div>
-        <i class="bi bi-youtube"></i>
-        <a href="https://www.youtube.com/watch?v=mIrRBJ5MvLw" target="_blank">
-            Processamento de Dados de GHG na Estação UNICID | Projeto Metroclima - Parte 2
-        </a>
-        </div>
-
-        <div>
-        <i class="bi bi-youtube"></i>
-        <a href="https://www.youtube.com/watch?v=i7hHfTyVNus" target="_blank">
-            Processamento de Dados de GHG na Estação Jaraguá | Projeto Metroclima - Parte 1
-        </a>
-        </div>
-    </div>
 
 {% endblock %}

@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from . import views
 
 urlpatterns = [
-    # path('', login_required(views.DashboardView.as_view()), name='ds_home'),
-    path('', views.data_overview, name='ds_home'),
+    path('', login_required(views.DashboardView.as_view()), name='ds_home'),
+    path('data_overview', views.data_overview, name='ds_data_overview'),
+    path('tutorials', views.tutorials, name='ds_tutorials'),
     path('stations/<slug:slug>/', login_required(views.DashboardStationsView.as_view()), name='ds_stations'),
     path('raw/<slug:slug>/', views.graphs_raw, name='ds_raw'),
     path('raw-24h/<slug:slug>/', views.graphs_raw_24h, name='ds_raw_24h'),

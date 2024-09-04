@@ -5,7 +5,7 @@ from django.forms import Textarea
 from .models import Campaign,  CampaignFile,\
                     Flag, \
                     Event, EventFile,\
-                    Logbook
+                    Logbook, Video
 
 
 class CampaignFileInline(admin.TabularInline):
@@ -61,3 +61,4 @@ admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(Flag, FlagAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Logbook, LogbookAdmin)
+admin.site.register(Video)

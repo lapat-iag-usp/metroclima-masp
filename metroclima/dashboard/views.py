@@ -12,7 +12,7 @@ import csv
 import xarray as xr
 
 from stations.models import Station, Instrument
-from .models import Campaign, Event
+from .models import Campaign, Event, Video
 from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0, data_overview_graph
 from .forms import (DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction,
                     YearFormFunction)
@@ -75,7 +75,13 @@ def data_overview(request):
     df.date = pd.to_datetime(df.date)
     script, div = data_overview_graph(df)
     context = {'script': script, 'div': div}
-    return render(request, 'dashboard/ds_home.html', context)
+    return render(request, 'dashboard/ds_data_overview.html', context)
+
+
+@login_required
+def tutorials(request):
+    videos = Video.objects.all()
+    return render(request, 'dashboard/ds_tutorials.html', {'videos': videos})
 
 
 @login_required

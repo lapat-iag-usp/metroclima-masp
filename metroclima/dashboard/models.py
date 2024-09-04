@@ -123,3 +123,16 @@ class EventFile(models.Model):
         storage, path = self.file.storage, self.file.path
         super(EventFile, self).delete(*args, **kwargs)
         storage.delete(path)
+
+
+class Video(models.Model):
+    title = models.CharField(max_length=300)
+    link = models.URLField()
+
+    def __str__(self):
+        return self.title
+
+    def get_youtube_thumbnail(self):
+        """Extrai o ID do vídeo do link do YouTube e retorna a URL da miniatura."""
+        video_id = self.link.split("/")[-1]
+        return f"https://img.youtube.com/vi/{video_id}/0.jpg"
