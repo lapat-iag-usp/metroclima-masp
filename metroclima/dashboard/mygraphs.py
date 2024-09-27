@@ -92,6 +92,67 @@ def find_intervals(df, problem_var):
     return intervals
 
 
+# def bokeh_raw(df, start_dates, end_dates, color='#1f77b4', color_dry="#ff7f0e"):
+#     # source
+#     source = ColumnDataSource(df)
+#
+#     # variables
+#     my_vars = [x for x in df.columns[1:] if '_dry' not in x]
+#     my_vars_dry = [x for x in df.columns[1:] if '_dry' in x]
+#
+#     # hover tool
+#     hover_tool_p = HoverTool(
+#         tooltips=[('date', '@DATE_TIME{%m/%d/%Y %H:%M:%S}'),
+#                   ('value', '$y')],
+#         formatters={'@DATE_TIME': 'datetime'},
+#         mode='vline')
+#
+#     plots = []
+#     i = 0
+#     for my_var in my_vars:
+#         p = figure(plot_height=150,
+#                    plot_width=900,
+#                    toolbar_location='right',
+#                    tools="pan, box_zoom, reset",
+#                    x_axis_type="datetime",
+#                    x_axis_location="below")
+#         p.scatter(x='DATE_TIME', y=my_var,
+#                   legend_label=my_var, source=source, line_color=color, fill_color=color, size=0.65, alpha=0.7)
+#         if my_var + '_dry' in my_vars_dry:
+#             p.scatter(x='DATE_TIME', y=my_var + '_dry',
+#                       legend_label=my_var + '_dry', source=source,
+#                       line_color=color_dry, fill_color=color_dry, size=0.65, alpha=0.7)
+#
+#         # logbook events - shaded area
+#         for start_date, end_date in zip(start_dates, end_dates):
+#             box = BoxAnnotation(left=start_date.timestamp() * 1000,
+#                                 right=end_date.timestamp() * 1000,
+#                                 fill_alpha=0.4,
+#                                 fill_color='gray')
+#             p.add_layout(box)
+#
+#         p.add_tools(hover_tool_p)
+#         p.toolbar.active_inspect = None
+#         p.xaxis.visible = True
+#         p.legend.background_fill_alpha = 0.75
+#         p.legend.click_policy = "hide"
+#         p.legend.spacing = 0
+#         p.legend.padding = 2
+#         p.toolbar.logo = None
+#         plots.append(p)
+#         if i == 0:
+#             x_range = p.x_range
+#         else:
+#             p.x_range = x_range
+#         i += 1
+#
+#     a = column(*plots)
+#     my_layout = grid([a], ncols=1)
+#     script, div = components(my_layout)
+#
+#     return script, div
+#
+
 def bokeh_raw(df, start_dates, end_dates, color='#1f77b4', color_dry="#ff7f0e"):
     # source
     source = ColumnDataSource(df)
@@ -100,28 +161,48 @@ def bokeh_raw(df, start_dates, end_dates, color='#1f77b4', color_dry="#ff7f0e"):
     my_vars = [x for x in df.columns[1:] if '_dry' not in x]
     my_vars_dry = [x for x in df.columns[1:] if '_dry' in x]
 
-    # hover tool
-    hover_tool_p = HoverTool(
-        tooltips=[('date', '@DATE_TIME{%m/%d/%Y %H:%M:%S}'),
-                  ('value', '$y')],
-        formatters={'@DATE_TIME': 'datetime'},
-        mode='vline')
-
     plots = []
     i = 0
     for my_var in my_vars:
-        p = figure(plot_height=150,
+        p = figure(plot_height=175,
                    plot_width=900,
-                   toolbar_location='right',
+                   toolbar_location='above',
                    tools="pan, box_zoom, reset",
                    x_axis_type="datetime",
                    x_axis_location="below")
-        p.scatter(x='DATE_TIME', y=my_var,
-                  legend_label=my_var, source=source, line_color=color, fill_color=color, size=0.65, alpha=0.7)
+
+        # Scatter plot da série original
+        scatter_orig = p.scatter(x='DATE_TIME', y=my_var,
+                                 legend_label=my_var, source=source,
+                                 line_color=color, fill_color=color,
+                                 size=0.65, alpha=0.7)
+
+        # Hover tool
+        hover_tool_orig = HoverTool(
+            renderers=[scatter_orig],
+            tooltips=[('date', '@DATE_TIME{%m/%d/%Y %H:%M:%S}'),
+                      (f'{my_var}', f'@{my_var}')],
+            formatters={'@DATE_TIME': 'datetime'},
+            mode='vline'
+        )
+        p.add_tools(hover_tool_orig)
+
+        # Scatter plot da série _dry, se existir
         if my_var + '_dry' in my_vars_dry:
-            p.scatter(x='DATE_TIME', y=my_var + '_dry',
-                      legend_label=my_var + '_dry', source=source,
-                      line_color=color_dry, fill_color=color_dry, size=0.65, alpha=0.7)
+            scatter_dry = p.scatter(x='DATE_TIME', y=my_var + '_dry',
+                                    legend_label=my_var + '_dry', source=source,
+                                    line_color=color_dry, fill_color=color_dry,
+                                    size=0.65, alpha=0.7)
+
+            # Hover tool dry
+            hover_tool_dry = HoverTool(
+                renderers=[scatter_dry],
+                tooltips=[('date', '@DATE_TIME{%m/%d/%Y %H:%M:%S}'),
+                          (f'{my_var}_dry', f'@{my_var}_dry')],
+                formatters={'@DATE_TIME': 'datetime'},
+                mode='vline'
+            )
+            p.add_tools(hover_tool_dry)
 
         # logbook events - shaded area
         for start_date, end_date in zip(start_dates, end_dates):
@@ -131,7 +212,6 @@ def bokeh_raw(df, start_dates, end_dates, color='#1f77b4', color_dry="#ff7f0e"):
                                 fill_color='gray')
             p.add_layout(box)
 
-        p.add_tools(hover_tool_p)
         p.toolbar.active_inspect = None
         p.xaxis.visible = True
         p.legend.background_fill_alpha = 0.75
