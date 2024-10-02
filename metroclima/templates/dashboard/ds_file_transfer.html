@@ -1,0 +1,30 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <h2 class="display-6">File transfer</h2>
+    <br>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        {{ form.station.label_tag }}  <!-- Label do campo Station -->
+        {{ form.station }}  <!-- Droplist do campo Station -->
+      </div>
+      <div class="mb-3">
+        {{ form.files.label_tag }}  <!-- Label do campo de arquivos -->
+        {{ form.files }}  <!-- Campo de seleção de múltiplos arquivos -->
+      </div>
+      <button type="submit" class="btn btn-sm btn-primary">Enviar Arquivos</button>
+    </form>
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message|safe }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+{% endblock %}

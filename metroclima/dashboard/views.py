@@ -1,9 +1,14 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import TemplateView, DetailView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
+from rest_framework.exceptions import APIException
+
 import os
 import glob
+import requests
+from decouple import config, Csv
 import dask.dataframe as dd
 import pandas as pd
 import numpy as np
@@ -15,7 +20,46 @@ from stations.models import Station, Instrument
 from .models import Campaign, Event, Video
 from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0, data_overview_graph
 from .forms import (DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction,
-                    YearFormFunction)
+                    YearFormFunction, MultiFileUploadForm)
+
+
+def is_in_group(user):
+    return user.groups.filter(name='Upload').exists()
+
+
+@user_passes_test(is_in_group)
+def file_transfer(request):
+    if request.method == 'POST':
+        form = MultiFileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            files = request.FILES.getlist('files')
+            station = form.cleaned_data['station']
+            success_files = []
+            error_files = []
+
+            for file in files:
+                api_url = f"http://{config('ALLOWED_HOSTS', cast=Csv())[0]}/api_upload/upload/"
+                file_data = {'file': file}
+                headers = {'Authorization': f'Token {config("TOKEN")}',
+                           'Station': station}
+
+                response = requests.post(api_url, files=file_data, headers=headers)
+
+                if response.status_code == 200:
+                    success_files.append(file.name)
+                else:
+                    error_files.append(file.name)
+
+            if success_files:
+                messages.success(request, "Arquivos enviados com sucesso:<br>" + "<br>".join(success_files))
+
+            if error_files:
+                messages.error(request, "Falha ao enviar os arquivos:<br>" + "<br>".join(error_files))
+
+            return redirect('ds_file_transfer')
+    else:
+        form = MultiFileUploadForm()
+    return render(request, 'dashboard/ds_file_transfer.html', {'form': form})
 
 
 def export_logbook_csv(request, slug):

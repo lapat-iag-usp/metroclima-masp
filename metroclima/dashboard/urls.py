@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', login_required(views.DashboardView.as_view()), name='ds_home'),
+    path('file_transfer', views.file_transfer, name='ds_file_transfer'),
     path('data_overview', views.data_overview, name='ds_data_overview'),
     path('tutorials', views.tutorials, name='ds_tutorials'),
     path('stations/<slug:slug>/', login_required(views.DashboardStationsView.as_view()), name='ds_stations'),

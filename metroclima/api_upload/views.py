@@ -19,6 +19,22 @@ class FileUploadView(APIView):
         context['name_size'] = uploaded_file.size
         station = request.META['HTTP_STATION']
 
+        # --------------- PRIMEIRA VERIFICAÇÃO ---------------
+        file_user_type = uploaded_file.name.split('-')[-1].split('.')[0]
+        path_user_type = station.split('/')[-2]
+        if file_user_type != path_user_type:
+            raise APIException("File type inconsistency!")
+
+        # --------------- SEGUNDA VERIFICAÇÃO ---------------
+        file_serial_number = uploaded_file.name.split('-')[0]
+        path_serial_number = station.split('/')[2].split('_')[1]
+        if file_serial_number != path_serial_number:
+            if file_serial_number == 'CFKADS3481' and path_serial_number == 'CFKADS2348':
+                pass
+            else:
+                raise APIException("Serial number inconsistency!")
+
+        # --------------- TERCEIRA VERIFICAÇÃO ---------------
         # check if Sync or not and correct date indexes
         n = 0 if uploaded_file.name.endswith('DataLog_User.dat') else 5
 
@@ -51,12 +67,11 @@ class FileUploadView(APIView):
                 context['url'] = fs.url(name)
                 return Response(context)
             else:
-                return Response(context)
+                raise APIException("File already in the system!")
         else:
             fs = FileSystemStorage()
             file_name = context['path'] + context['name_file']
             name = fs.save(file_name[8:], uploaded_file)
             context['url'] = fs.url(name)
             print(file_name[8:])
-            print(file_name)
             return Response(context)
