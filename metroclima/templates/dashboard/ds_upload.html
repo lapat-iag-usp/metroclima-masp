@@ -1,0 +1,23 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <h2 class="display-6">Transfer</h2>
+    <br>
+
+    <ul>
+    <li>
+      <a href="{% url 'ds_file_transfer' %}" style="text-decoration:None;color:black">
+        CRDS File transfer
+      </a>
+    </li>
+    <br>
+    <li>
+      <a href="{% url 'ds_folder_transfer' %}" style="text-decoration:None;color:black">
+        CRDS Folder transfer
+      </a>
+    </li>
+    </ul>
+
+{% endblock %}

@@ -20,7 +20,7 @@ from stations.models import Station, Instrument
 from .models import Campaign, Event, Video
 from .mygraphs import bokeh_raw, bokeh_raw_mobile, bokeh_level_0, data_overview_graph
 from .forms import (DataRawFormFunction, DataRaw24hFormFunction, DataLevel0FormFunction,
-                    YearFormFunction, MultiFileUploadForm)
+                    YearFormFunction, MultiFileUploadForm, FolderUploadForm)
 
 
 def is_in_group(user):
@@ -67,6 +67,46 @@ def file_transfer(request):
         return render(request, 'dashboard/ds_file_transfer.html', {'form': form})
 
 
+@user_passes_test(is_in_group)
+def folder_transfer(request):
+    selected_station = None
+    if request.method == 'POST':
+        form = FolderUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            files = request.FILES.getlist('files')
+            station = form.cleaned_data['station']
+            selected_station = station
+            success_files = []
+            error_files = []
+
+            for file in files:
+                api_url = f"http://{config('ALLOWED_HOSTS', cast=Csv())[0]}/api_upload/upload/"
+                file_data = {'file': file}
+                headers = {'Authorization': f'Token {config("TOKEN")}',
+                           'Station': station}
+
+                response = requests.post(api_url, files=file_data, headers=headers)
+
+                if response.status_code == 200:
+                    success_files.append(file.name)
+                else:
+                    error_files.append(file.name)
+
+            if success_files:
+                messages.success(request, "Arquivos enviados com sucesso:<br>" + "<br>".join(success_files))
+
+            if error_files:
+                messages.error(request, "Falha ao enviar os arquivos:<br>" + "<br>".join(error_files))
+
+            form = FolderUploadForm(initial={'station': selected_station})
+
+            return render(request, 'dashboard/ds_folder_transfer.html', {'form': form})
+    else:
+        form = FolderUploadForm(initial={'station': selected_station})
+
+        return render(request, 'dashboard/ds_folder_transfer.html', {'form': form})
+
+
 def export_logbook_csv(request, slug):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="{}"'.format('logbook-' + slug + '.csv')
@@ -81,6 +121,10 @@ def export_logbook_csv(request, slug):
         writer.writerow(event)
 
     return response
+
+
+class DashboardUploadView(TemplateView):
+    template_name = 'dashboard/ds_upload.html'
 
 
 class DashboardView(TemplateView):

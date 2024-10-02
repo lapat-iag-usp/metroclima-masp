@@ -20,7 +20,18 @@ class MultiFileUploadForm(forms.Form):
         label='Selecione a campanha de medição')
 
     files = forms.FileField(widget=forms.ClearableFileInput(
-        attrs={'class': 'form-control form-control-sm', 'multiple': True}), label='Selecione os arquivos')
+        attrs={'class': 'form-control form-control-sm', 'multiple': True}), label='Selecione um ou mais arquivos')
+
+
+class FolderUploadForm(forms.Form):
+    station = forms.ChoiceField(
+        widget=forms.Select(attrs={'class': 'form-select form-select-sm'}),
+        choices=CAMPAIGN_CHOICES,
+        label='Selecione a campanha de medição')
+
+    files = forms.FileField(widget=forms.ClearableFileInput(
+        attrs={'class': 'form-control form-control-sm', 'webkitdirectory': True, 'multiple': True}),
+        label='Selecione uma pasta')
 
 
 def YearFormFunction(years_choices):
