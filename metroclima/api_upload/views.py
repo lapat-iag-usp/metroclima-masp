@@ -20,12 +20,17 @@ class FileUploadView(APIView):
         station = request.META['HTTP_STATION']
 
         # --------------- PRIMEIRA VERIFICAÇÃO ---------------
+        file_ext = uploaded_file.name[-4:]
+        if file_ext != '.dat':
+            raise APIException("File extension inconsistency!")
+
+        # --------------- SEGUNDA VERIFICAÇÃO ---------------
         file_user_type = uploaded_file.name.split('-')[-1].split('.')[0]
         path_user_type = station.split('/')[-2]
         if file_user_type != path_user_type:
             raise APIException("File type inconsistency!")
 
-        # --------------- SEGUNDA VERIFICAÇÃO ---------------
+        # --------------- TERCEIRA VERIFICAÇÃO ---------------
         file_serial_number = uploaded_file.name.split('-')[0]
         path_serial_number = station.split('/')[2].split('_')[1]
         if file_serial_number != path_serial_number:
@@ -34,7 +39,7 @@ class FileUploadView(APIView):
             else:
                 raise APIException("Serial number inconsistency!")
 
-        # --------------- TERCEIRA VERIFICAÇÃO ---------------
+        # --------------- QUARTA VERIFICAÇÃO ---------------
         # check if Sync or not and correct date indexes
         n = 0 if uploaded_file.name.endswith('DataLog_User.dat') else 5
 

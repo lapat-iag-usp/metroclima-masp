@@ -29,11 +29,13 @@ def is_in_group(user):
 
 @user_passes_test(is_in_group)
 def file_transfer(request):
+    selected_station = None
     if request.method == 'POST':
         form = MultiFileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             files = request.FILES.getlist('files')
             station = form.cleaned_data['station']
+            selected_station = station
             success_files = []
             error_files = []
 
@@ -56,10 +58,13 @@ def file_transfer(request):
             if error_files:
                 messages.error(request, "Falha ao enviar os arquivos:<br>" + "<br>".join(error_files))
 
-            return redirect('ds_file_transfer')
+            form = MultiFileUploadForm(initial={'station': selected_station})
+
+            return render(request, 'dashboard/ds_file_transfer.html', {'form': form})
     else:
-        form = MultiFileUploadForm()
-    return render(request, 'dashboard/ds_file_transfer.html', {'form': form})
+        form = MultiFileUploadForm(initial={'station': selected_station})
+
+        return render(request, 'dashboard/ds_file_transfer.html', {'form': form})
 
 
 def export_logbook_csv(request, slug):
