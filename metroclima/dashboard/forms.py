@@ -6,6 +6,7 @@ CAMPAIGN_CHOICES = [
     ('raw-data/jaragua/G2301_CFADS2502/DataLog_User/', 'Pico do Jaraguá G2301 II 202210 - DataLog_User'),
     ('raw-data/jaragua/G2301_CFADS2200/DataLog_User/', 'Pico do Jaraguá G2301 201901 - DataLog_User'),
     ('raw-data/jaragua/G2201-i_CFIDS2278/DataLog_User/', 'Pico do Jaraguá G2201-i 202406 - DataLog_User'),
+    ('raw-data/icesp/G2311-f_CFHADS2050/DataLog_User/', 'ICESP G2311-f 202008 - DataLog_User'),
     ('raw-data/icesp/G2311-f_CFHADS2050/DataLog_User_Sync/', 'ICESP G2311-f 202008 - DataLog_User_Sync'),
     ('raw-data/iag/G2301-m_CFADS2133/DataLog_User/', 'IAG G2301-m 201901 - DataLog_User'),
     ('raw-data/iag/G2301_CFADS2502/DataLog_User/', 'IAG G2301 II 202003 - DataLog_User'),

@@ -50,7 +50,13 @@ def file_transfer(request):
                 if response.status_code == 200:
                     success_files.append(file.name)
                 else:
-                    error_files.append(file.name)
+                    try:
+                        error_message = response.json().get('detail', 'Erro desconhecido')
+                    except ValueError:
+                        error_message = 'Erro de resposta inválida da API'
+
+                    error_files.append(f"{file.name} - {error_message}")
+                    # error_files.append(file.name)
 
             if success_files:
                 messages.success(request, "Arquivos enviados com sucesso:<br>" + "<br>".join(success_files))
