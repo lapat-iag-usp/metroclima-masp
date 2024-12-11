@@ -1,13 +1,38 @@
 {% extends 'dashboard/ds_base.html' %}
 {% load static %}
 
-
 {% block content %}
     <h2 class="display-6">Dashboard</h2>
-    <br>
+{#    <br>#}
 
+    <!-- Link para o README -->
     <a href="https://docs.google.com/document/d/1Q27zpniNG-ZdAIPuHix118fxqwCXUInTpv8A8aCUMsg/edit?usp=sharing" target="_blank" class="btn btn-link">
-            <i class="bi bi-file-earmark-text me-1"></i> README
+        <i class="bi bi-file-earmark-text me-1"></i> README
     </a>
+    <br><br>
+    <h4 class="mb-3">Data Processing</h4>
 
+    <!-- Parágrafo explicativo -->
+    <p>
+        Arquivos com detalhes sobre o processamento dos dados de cada estação:
+    </p>
+
+    <!-- Lista de arquivos -->
+    <ul>
+        <li class="mb-3">
+            <a href="https://docs.google.com/presentation/d/1dWxr5txEG7RFWyZaitv4J0n_JYp858uwOistfzvRicM/edit?usp=sharing" target="_blank">
+                IAG Station
+            </a>
+        </li>
+        <li class="mb-3">
+            <a href="https://docs.google.com/presentation/d/1rh_4icpNxwcMm5FenkUUj4GTsOr9qT5Tf6fTItkIuGM/edit?usp=sharing" target="_blank">
+                UNICID Station
+            </a>
+        </li>
+        <li class="mb-3">
+            <a href="https://docs.google.com/presentation/d/1jPuUQhyHGC5Cb3hrUd7sFW7hEq5PRSnSsRqGd0ebylo/edit?usp=sharing" target="_blank">
+                Pico do Jaraguá Station
+            </a>
+        </li>
+    </ul>
 {% endblock %}
