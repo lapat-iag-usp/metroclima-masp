@@ -107,17 +107,19 @@
           Data policy
       </a>
     </h3>
+    {% for item in campaign_graphs %}
     <div class="lead" style="font-size:18px">
-      <p>Time series plots show hourly and daily average factory corrected dry mole
-        fractions of CO2 and CH4 in parts per million (ppm).
-        Graphs show uncalibrated data.
+      <p>{{ item.campaign.uncalibrated_data_description }}
       </p>
       <!-- Graphs -->
-        {{div | safe}}
-        {{script | safe}}
+        {{ item.div | safe}}
+        {{ item.script | safe}}
       <!-- Graphs END -->
       <br><br>
     </div>
+    {% empty %}
+    <p>Data will be available soon.</p>
+    {% endfor %}
   </div>
 
 </div>

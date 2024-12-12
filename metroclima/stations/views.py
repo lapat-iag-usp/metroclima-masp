@@ -4,10 +4,12 @@ from django.shortcuts import render
 import folium
 from django.views.generic import ListView, DetailView
 import pandas as pd
+import xarray as xr
 from os.path import dirname, join
 
 from .models import Station
 from .mygraphs import station_graphs
+from dashboard.models import Campaign
 
 
 def show_map(request):
@@ -55,15 +57,23 @@ class StationListView(ListView):
 
 def station_detail(request, slug):
     station = Station.objects.get(slug=slug)
-    if os.path.exists(join(dirname(__file__), f'../static/data/{slug}.txt')):
-        df = pd.read_csv(join(dirname(__file__), f'../static/data/{slug}.txt'))
-        df['DATE_TIME'] = pd.to_datetime(df.DATE_TIME)
-        script, div = station_graphs(df)
-        context = {'station': station, 'script': script, 'div': div}
-        return render(request, 'stations/stations_detail.html', context)
-    else:
-        df = pd.DataFrame({'A': []})
-        script, div = station_graphs(df)
-        context = {'station': station}
-        context = {'station': station, 'script': script, 'div': div}
-        return render(request, 'stations/stations_detail.html', context)
+    campaigns = Campaign.objects.filter(station=station)
+
+    campaign_graphs = []
+    for campaign in campaigns:
+        if campaign.uncalibrated_data_path:
+            ds = xr.open_dataset(campaign.uncalibrated_data_path)
+            df = ds.to_dataframe().reset_index()
+            df['time'] = pd.to_datetime(df.time)
+            script, div = station_graphs(df)
+            campaign_graphs.append({
+                'campaign': campaign,
+                'script': script,
+                'div': div
+            })
+
+    context = {
+        'station': station,
+        'campaign_graphs': campaign_graphs
+    }
+    return render(request, 'stations/stations_detail.html', context)
