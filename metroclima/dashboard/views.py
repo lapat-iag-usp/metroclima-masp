@@ -187,6 +187,7 @@ class DashboardDownloadFilesView(TemplateView):
         path = os.path.join(settings.MEDIA_ROOT, campaign.level_1_data_path)
         if os.path.exists(path) and os.path.isdir(path):
             files_list = os.listdir(path)
+            files_list.sort()
             files_urls = [os.path.join(settings.MEDIA_URL, campaign.level_1_data_path, file) for file in files_list]
         else:
             files_list = []
