@@ -13,9 +13,9 @@
     {% if files %}
         <h4>Available files:</h4>
         <ul>
-            {% for file in files %}
+            {% for file, url in files %}
                 <li>
-                    <a href="{{ MEDIA_URL }}{{ campaign.level_1_data_path }}/{{ file }}" download style="text-decoration:None;color:black">
+                    <a href="{{ url }}" download style="text-decoration:None;color:black">
                         {{ file }}
                     </a>
                 </li>

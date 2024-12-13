@@ -158,10 +158,14 @@ class DashboardDownloadFilesView(TemplateView):
 
         path = os.path.join(settings.MEDIA_ROOT, campaign.level_1_data_path)
         if os.path.exists(path) and os.path.isdir(path):
-            files = os.listdir(path)
+            files_list = os.listdir(path)
+            files_urls = [os.path.join(settings.MEDIA_URL, campaign.level_1_data_path, file) for file in files_list]
         else:
             files = []
-        context['files'] = files
+        context['files'] = zip(files_list, files_urls)
+        print(context['files'])
+        # context['files_list'] = files
+        # context['files_urls'] = files_urls
         return context
 
 
