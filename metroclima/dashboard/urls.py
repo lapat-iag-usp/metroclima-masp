@@ -11,6 +11,7 @@ urlpatterns = [
     path('upload', login_required(views.DashboardUploadView.as_view()), name='ds_upload'),
     path('download', login_required(views.DashboardDownloadView.as_view()), name='ds_download'),
     path('download/<slug:slug>/files/', views.DashboardDownloadFilesView.as_view(), name='ds_download_files'),
+    path('download/<slug:slug>/files/all/', views.download_all_files, name='download_all_files'),
     path('file_transfer', views.file_transfer, name='ds_file_transfer'),
     path('folder_transfer', views.folder_transfer, name='ds_folder_transfer'),
     path('data_overview', views.data_overview, name='ds_data_overview'),

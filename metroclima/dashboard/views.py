@@ -1,13 +1,16 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.contrib import messages
 from django.conf import settings
+from django.urls import reverse
 from rest_framework.exceptions import APIException
 
 import os
 import glob
+import io
+import zipfile
 import requests
 from decouple import config, Csv
 import dask.dataframe as dd
@@ -130,6 +133,31 @@ def export_logbook_csv(request, slug):
     return response
 
 
+def download_all_files(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    path = os.path.join(settings.MEDIA_ROOT, campaign.level_1_data_path)
+
+    if not os.path.exists(path) or not os.path.isdir(path):
+        return HttpResponseNotFound('Nenhum arquivo disponível para download.')
+
+    # Cria um buffer em memória para o ZIP
+    buffer = io.BytesIO()
+
+    # Cria o ZIP no buffer
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for file in os.listdir(path):
+            full_file_path = os.path.join(path, file)
+            if os.path.isfile(full_file_path):
+                zf.write(full_file_path, os.path.basename(full_file_path))
+
+    # Configura o buffer para o início
+    buffer.seek(0)
+
+    # Retorna o arquivo ZIP como resposta
+    response = FileResponse(buffer, as_attachment=True, filename=f"{campaign.slug}_all_files.zip")
+    return response
+
+
 class DashboardUploadView(TemplateView):
     template_name = 'dashboard/ds_upload.html'
 
@@ -161,11 +189,10 @@ class DashboardDownloadFilesView(TemplateView):
             files_list = os.listdir(path)
             files_urls = [os.path.join(settings.MEDIA_URL, campaign.level_1_data_path, file) for file in files_list]
         else:
-            files = []
+            files_list = []
+            files_urls = []
         context['files'] = zip(files_list, files_urls)
-        print(context['files'])
-        # context['files_list'] = files
-        # context['files_urls'] = files_urls
+        context['download_all_url'] = reverse('download_all_files', args=[campaign.slug])
         return context
 
 
