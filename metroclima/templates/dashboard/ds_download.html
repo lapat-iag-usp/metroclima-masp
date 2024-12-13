@@ -1,0 +1,29 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+{% block content %}
+    <h2 class="display-6">Download</h2>
+    <p>Download Calibrated Data - Level 1</p>
+    <br>
+
+    {% if grouped_campaigns %}
+        {% for station, campaigns in grouped_campaigns.items %}
+            <h4 class="mb-3">{{ station.name }}</h4>
+            {% if campaigns %}
+                <ul>
+                    {% for campaign in campaigns %}
+                        <li>
+                            <a href="{% url 'ds_download_files' campaign.slug %}" style="text-decoration:None;color:black">
+                                {{ campaign.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No campaigns with calibrated data available for this station.</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No stations or campaigns with calibrated data available for download.</p>
+    {% endif %}
+{% endblock %}

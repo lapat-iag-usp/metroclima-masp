@@ -1,0 +1,28 @@
+{% extends 'dashboard/ds_base.html' %}
+{% load static %}
+
+{% block content %}
+    <h2 class="display-6">{{ campaign.name }}</h2>
+    {% if campaign.level_1_data_description %}
+        <p>{{ campaign.level_1_data_description }}</p>
+    {% else %}
+        <p>Files for campaign: {{ campaign.name }}</p>
+    {% endif %}
+    <br>
+
+    {% if files %}
+        <h4>Available files:</h4>
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ MEDIA_URL }}{{ campaign.level_1_data_path }}/{{ file }}" download style="text-decoration:None;color:black">
+                        {{ file }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <br>
+    {% else %}
+        <p>No files available for this campaign.</p>
+    {% endif %}
+{% endblock %}

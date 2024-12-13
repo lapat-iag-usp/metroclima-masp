@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.generic import TemplateView, DetailView
-from django.shortcuts import render, redirect
+from django.views.generic import TemplateView, DetailView, ListView
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from django.conf import settings
 from rest_framework.exceptions import APIException
 
 import os
@@ -131,6 +132,37 @@ def export_logbook_csv(request, slug):
 
 class DashboardUploadView(TemplateView):
     template_name = 'dashboard/ds_upload.html'
+
+
+class DashboardDownloadView(TemplateView):
+    template_name = 'dashboard/ds_download.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stations = Station.objects.all()
+        grouped_campaigns = {
+            station: station.campaign_set.filter(level_1_data_path__isnull=False)
+            for station in stations
+        }
+        context['grouped_campaigns'] = grouped_campaigns
+        return context
+
+
+class DashboardDownloadFilesView(TemplateView):
+    template_name = 'dashboard/ds_download_files.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        campaign = get_object_or_404(Campaign, slug=kwargs['slug'])
+        context['campaign'] = campaign
+
+        path = os.path.join(settings.MEDIA_ROOT, campaign.level_1_data_path)
+        if os.path.exists(path) and os.path.isdir(path):
+            files = os.listdir(path)
+        else:
+            files = []
+        context['files'] = files
+        return context
 
 
 class DashboardView(TemplateView):

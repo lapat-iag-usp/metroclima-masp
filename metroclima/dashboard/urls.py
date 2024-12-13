@@ -1,4 +1,7 @@
 from django.urls import path
+
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 
 from . import views
@@ -6,6 +9,8 @@ from . import views
 urlpatterns = [
     path('', login_required(views.DashboardView.as_view()), name='ds_home'),
     path('upload', login_required(views.DashboardUploadView.as_view()), name='ds_upload'),
+    path('download', login_required(views.DashboardDownloadView.as_view()), name='ds_download'),
+    path('download/<slug:slug>/files/', views.DashboardDownloadFilesView.as_view(), name='ds_download_files'),
     path('file_transfer', views.file_transfer, name='ds_file_transfer'),
     path('folder_transfer', views.folder_transfer, name='ds_folder_transfer'),
     path('data_overview', views.data_overview, name='ds_data_overview'),
