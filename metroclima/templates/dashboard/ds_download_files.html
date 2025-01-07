@@ -4,7 +4,7 @@
 {% block content %}
     <h2 class="display-6">{{ campaign.name }}</h2>
     {% if campaign.level_1_data_description %}
-        <p>{{ campaign.level_1_data_description }}</p>
+        <p>{{ campaign.level_1_data_description|linebreaksbr|safe }}</p>
     {% else %}
         <p>Files for campaign: {{ campaign.name }}</p>
     {% endif %}
