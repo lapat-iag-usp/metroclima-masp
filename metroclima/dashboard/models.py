@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.core.exceptions import ValidationError
 
 from stations.models import Station, Instrument
 
@@ -89,6 +90,11 @@ class Event(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            original = Event.objects.get(pk=self.pk)
+            if self.logbook != original.logbook:
+                raise ValidationError("The logbook field cannot be changed after the record is created.")
+
         qs = Event.objects.filter(event_date=self.event_date)
         if not qs:
             n = 1

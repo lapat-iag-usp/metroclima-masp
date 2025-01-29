@@ -33,6 +33,11 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('logbook', 'event_date', 'invalid', 'revised', 'flags')
     inlines = [EventFileInline]
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('logbook',)
+        return self.readonly_fields
+
     class Media:
         js = ('/static/admin/js/hide_attribute.js',)
 
