@@ -1,11 +1,19 @@
 from django.contrib import admin
 from django.db import models
 from django.forms import Textarea
+from django.contrib.admin.models import LogEntry
 
 from .models import Campaign,  CampaignFile,\
                     Flag, \
                     Event, EventFile,\
                     Logbook, Video
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'change_message')
+    list_filter = ('action_time', 'user', 'content_type', 'action_flag')
+    search_fields = ('object_repr', 'change_message')
 
 
 class CampaignFileInline(admin.TabularInline):
