@@ -441,8 +441,12 @@ def graphs_raw_24h(request, slug):
 
             if 'species' in df.columns:
                 # TODO: The specie value is subject to change and should be configurable by the user
-                df = df[df.species == 1]
-                df = df.drop(['species'], axis=1)
+                if '12CO2_dry' in df.columns:  # ATTENTION: Hot fix!
+                    df = df[df.species == 105]  # C-12 isotopologue of carbon dioxide
+                    df = df.drop(['species'], axis=1)
+                else:
+                    df = df[df.species == 1]
+                    df = df.drop(['species'], axis=1)
 
             df['DATE_TIME'] = pd.to_datetime(df['DATE'] + ' ' + df['TIME'])
             df = df.drop(['DATE', 'TIME'], axis=1)
